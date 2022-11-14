@@ -1,5 +1,6 @@
 from objects.frame import Frame
 from objects.block import Block
+from objects.pixel import Pixel
 
 class Terrain:
     def __init__(self) -> None:
@@ -7,9 +8,21 @@ class Terrain:
         frames - a list of frames from the video
         mode - 0 for background, 1 for foreground
         """
-        self.frames: list(Frame)
+        self.pixels: list[list[Pixel]]
+        self.frames: list[Frame]
         self.mode: int
     
-    def stitch_frames() -> list(int, int):
-        """Stitch frames together and convert to a 2d array of integers"""
+    def stitch_frames(self) -> None:
+        """Stitch frames together and convert to a 2d array of pixels"""
+        pass
+
+    def get_terrain(self) -> list[list[Pixel]]:
+        """Return entire terrain"""
+        self.stitch_frames()
+        return self.frames
+
+    def synchronize(self, background):
+        """Synchronize foreground pixel indecies with background terrain size"""
+        if self.mode == 0:
+            return
         pass

@@ -1,6 +1,5 @@
 from objects.frame import Frame
 from objects.pixel import Pixel
-from objects.vector import Vector
 # Holds an 8x8 block in a frame
 class Block:
     def __init__(self) -> None:
@@ -14,8 +13,9 @@ class Block:
         self.index: int
         self.position: tuple[int, int]
         self.type: int
-        self.vector: Vector
+        self.vector: tuple[int, int]
 
     def calculate_motion_vector(previous_frame: Frame) -> None:
         """Calculates motion vector based on MAD"""
         pass
+    
