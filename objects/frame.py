@@ -1,8 +1,7 @@
 from block import Block
 from random import randint
+from constants import MACRO_SIZE
 import numpy as np
-
-MACRO_SIZE = 16
 
 # Holds a single frame
 class Frame:
@@ -42,15 +41,28 @@ class Frame:
         """Set blocks to foreground or background"""
         pass
 
+    def get_frame_data(self) -> list[list[list[int, int, int]]]:
+        """Retrieve all values in frame"""
+        x_blocks = self.width // MACRO_SIZE
+        y_blocks = self.height // MACRO_SIZE
+        blocks = np.array(self.blocks).reshape(x_blocks, y_blocks)
+        blocks = np.vectorize(lambda x: x.data)(blocks)
+        frame_data = np.concatenate(blocks, axis=1)
+        return frame_data
 
 def test_read_into_blocks():
-    test = np.array([[[randint(0, 100) for i in range(3)] for j in range(480)] for k in range(640)])
+    test = np.array([[[randint(0, 255) for i in range(3)] for j in range(480)] for k in range(640)])
     # test = np.array([[0 for j in range(480)] for k in range(640)])
     frame = Frame(0, 640, 480)
     frame.read_into_blocks(test)
     # Check first and last frame
     first_frame_expected = test[0:16, 0:16]
     last_frame_expected = test[624:640, 464:480]
-    print(first_frame_expected == frame.blocks[0].data)
-    print(last_frame_expected == frame.blocks[-1].data)
+    # print(first_frame_expected == frame.blocks[0].data)
+    # print(last_frame_expected == frame.blocks[-1].data)
+    frame_data = frame.get_frame_data()
+    print("===========")
+    print(frame_data == test)
+
+test_read_into_blocks()
 

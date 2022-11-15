@@ -6,5 +6,5 @@ class Pixel:
         self.hsv_val: tuple[int, int, int]
     
     def hsv_init():
-        # Generate hsv values from rgb values
+        """Generate hsv values from rgb values"""
         pass
