@@ -1,0 +1,8 @@
+# mp4
+*.mp4
+
+# MAC files
+.DS_STORE
+
+# testing  file
+test.txt
