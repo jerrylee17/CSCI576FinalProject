@@ -47,9 +47,12 @@ class Frame:
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE
         blocks = np.array(self.blocks).reshape(x_blocks, y_blocks)
-        # blocks = np.vectorize(lambda x: x.data)(blocks)
-        frame_data = np.concatenate(blocks, axis=1)
-        # return 0
+        frame_data = []
+        for block_row in blocks:
+            block_row = [x.data for x in block_row]
+            block_row = np.concatenate(block_row, axis = 1)
+            frame_data.extend(block_row)
+        return frame_data
 
 def test_read_into_blocks():
     test = np.array([[[randint(0, 255) for i in range(3)] for j in range(480)] for k in range(640)])
@@ -64,6 +67,3 @@ def test_read_into_blocks():
     frame_data = frame.get_frame_data()
     print("===========")
     print(frame_data == test)
-
-# test_read_into_blocks()
-
