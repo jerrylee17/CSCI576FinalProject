@@ -1,7 +1,8 @@
-from block import Block
+from objects.block import Block
 from random import randint
 from constants import MACRO_SIZE
 import numpy as np
+from typing import List, Tuple
 
 # Holds a single frame
 class Frame:
@@ -12,14 +13,14 @@ class Frame:
         vector - motion vector of frame (from previous frame)
         """
         self.index: int = index
-        self.position: tuple[int, int]
-        self.vector: tuple[int, int]
+        self.position: Tuple[int, int]
+        self.vector: Tuple[int, int]
         self.width: int = width
         self.height: int = height
         # Store values in the blocks within the frame
-        self.blocks: list[Block, Block] = []
+        self.blocks: List[Block, Block] = []
 
-    def read_into_blocks(self, pixels: list[list[list[int, int, int]]]) -> None:
+    def read_into_blocks(self, pixels: List[List[List[int, int, int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
         split_x = [x for x in range(0, self.width, MACRO_SIZE)]
         split_y = [y for y in range(0, self.height, MACRO_SIZE)]
@@ -41,7 +42,7 @@ class Frame:
         """Set blocks to foreground or background"""
         pass
 
-    def get_frame_data(self) -> list[list[list[int, int, int]]]:
+    def get_frame_data(self) -> List[List[List[int, int, int]]]:
         """Retrieve all values in frame"""
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE

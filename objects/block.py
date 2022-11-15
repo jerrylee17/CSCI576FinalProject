@@ -1,6 +1,6 @@
-from pixel import Pixel
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from constants import MACRO_SIZE
+from typing import List, Tuple
 
 # Holds an 8x8 block in a frame
 class Block:
@@ -13,14 +13,14 @@ class Block:
         type - foreground(1) or background(0)
         vector - motion vector of block
         """
-        self.data: list[list[list[int, int, int]]] = data
+        self.data: List[List[List[int, int, int]]] = data
         self.data_type = "rgb"
         self.index: int = index
-        self.position: tuple[int, int] = position
+        self.position: Tuple[int, int] = position
         self.type: int
-        self.vector: tuple[int, int]
+        self.vector: Tuple[int, int]
 
-    def calculate_motion_vector(self, previous_frame_data: list[list[list[int, int, int]]]) -> None:
+    def calculate_motion_vector(self, previous_frame_data: List[List[List[int, int, int]]]) -> None:
         """Calculates motion vector based on MAD"""
         # Convert to hsv
         self.convert_to_hsv()

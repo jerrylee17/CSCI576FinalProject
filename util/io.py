@@ -1,11 +1,12 @@
 from objects.frame import Frame
+from typing import List
 
-def readVideo(file_path: str) -> list[Frame]:
+def readVideo(file_path: str) -> List[Frame]:
     """Read videos into frames."""
     # We need to account for rgb / mp4 file formats
     pass
 
-def displayVideo(frames: list(Frame)):
+def displayVideo(frames: List(Frame)):
     """Displays video."""
     pass
 

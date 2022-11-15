@@ -2,17 +2,18 @@ import sys
 from util.io import readVideo, displayVideo
 from objects.frame import Frame
 from objects.terrain import Terrain
+from typing import List, Tuple
 
 def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
-    input_frames: list[Frame] = readVideo(input_video_path)
+    input_frames: List[Frame] = readVideo(input_video_path)
 
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
     background: Terrain
-    foreground: list[Terrain]
+    foreground: List[Terrain]
 
     background, foreground = get_foreground_and_background(input_frames)
 
