@@ -42,4 +42,5 @@ def get_foreground_and_background(frames):
     pass
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test_read_into_blocks()
