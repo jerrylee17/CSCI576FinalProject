@@ -1,8 +1,8 @@
 import sys
 from util.io import readVideo, displayVideo
-from objects.frame import Frame
+from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
-from typing import List, Tuple
+from typing import List
 
 def main():
     input_video_path = sys.argv[1]

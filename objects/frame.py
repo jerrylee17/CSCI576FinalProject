@@ -1,6 +1,6 @@
 from objects.block import Block
+from objects.constants import MACRO_SIZE
 from random import randint
-from constants import MACRO_SIZE
 import numpy as np
 from typing import List, Tuple
 
@@ -20,7 +20,7 @@ class Frame:
         # Store values in the blocks within the frame
         self.blocks: List[Block, Block] = []
 
-    def read_into_blocks(self, pixels: List[List[List[int, int, int]]]) -> None:
+    def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
         split_x = [x for x in range(0, self.width, MACRO_SIZE)]
         split_y = [y for y in range(0, self.height, MACRO_SIZE)]
@@ -42,14 +42,14 @@ class Frame:
         """Set blocks to foreground or background"""
         pass
 
-    def get_frame_data(self) -> List[List[List[int, int, int]]]:
+    def get_frame_data(self) -> List[List[List[int]]]:
         """Retrieve all values in frame"""
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE
         blocks = np.array(self.blocks).reshape(x_blocks, y_blocks)
-        blocks = np.vectorize(lambda x: x.data)(blocks)
+        # blocks = np.vectorize(lambda x: x.data)(blocks)
         frame_data = np.concatenate(blocks, axis=1)
-        return frame_data
+        # return 0
 
 def test_read_into_blocks():
     test = np.array([[[randint(0, 255) for i in range(3)] for j in range(480)] for k in range(640)])
