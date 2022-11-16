@@ -1,9 +1,22 @@
 from PIL import Image
 from objects.frame import Frame
 from typing import List
-from objects.constants import FPS
+from objects.constants import FPS, MACRO_SIZE
 import cv2
 import numpy
+
+
+def get_zero_padding_size(width: int, height: int):
+    """Calculate the cols and rows of zeros that need to be padded."""
+    zero_padding_cols = MACRO_SIZE - (width % MACRO_SIZE)
+    if zero_padding_cols == MACRO_SIZE:
+        zero_padding_cols = 0
+
+    zero_padding_rows = MACRO_SIZE - (height % MACRO_SIZE)
+    if zero_padding_rows == MACRO_SIZE:
+        zero_padding_rows = 0
+
+    return zero_padding_cols, zero_padding_rows
 
 
 def read_rgb_image(file_name: str, width: int, height: int) -> List[List[List[int]]]:
@@ -11,15 +24,30 @@ def read_rgb_image(file_name: str, width: int, height: int) -> List[List[List[in
     file = open(file_name, "rb")
     content = [byte for byte in bytearray(file.read())]
 
+    zero_cols, zero_rows = get_zero_padding_size(width, height)
+
     image = []
     idx = 0
-    for _ in range(height):
+    for col in range(height + zero_rows):
         col_list = []
-        for _ in range(width):
-            # Separate R, G, and B values
-            rgb_list = [content[3 * idx] & 0xff, content[3 * idx + 1] & 0xff, content[3 * idx + 2] & 0xff]
-            col_list.append(rgb_list)
-            idx += 1
+
+        if col >= height:
+            for row in range(width + zero_cols):
+                rgb_list = [0, 0, 0]
+                col_list.append(rgb_list)
+            image.append(col_list)
+            continue
+
+        for row in range(width + zero_cols):
+            if row < width and col < height:
+                # Separate R, G, and B values
+                rgb_list = [content[3 * idx] & 0xff, content[3 * idx + 1] & 0xff, content[3 * idx + 2] & 0xff]
+                col_list.append(rgb_list)
+                idx += 1
+            else:
+                rgb_list = [0, 0, 0]
+                col_list.append(rgb_list)
+
         image.append(col_list)
 
     return image
@@ -41,6 +69,7 @@ def get_video_info_from_name(file_path: str) -> dict:
     split_path = file_path.split("/")
     file_name = split_path[-2] if len(split_path[-1]) == 0 else split_path[-1]
     split_name = file_name.split("_")
+
     return {
         "name": split_name[0],
         "width": int(split_name[1]),
@@ -138,9 +167,9 @@ def display_video(frames: List[Frame]):
 def test_image():
     # print(os.getcwd())
     image = (read_rgb_image("../videos/Stairs_490_270_346/Stairs_490_270_346.001.rgb", 490, 270))
-    frame = Frame(1, 490, 270)
-    # frame.read_into_blocks(image)
-    display_frame(frame, image)
+    frame = Frame(1, 496, 272)
+    frame.read_into_blocks(image)
+    display_frame(frame)
 
 
 def test_video():
@@ -148,6 +177,6 @@ def test_video():
     display_video(video)
 
 
-# if __name__ == '__main__':
-    # test_image()
+if __name__ == '__main__':
+    test_image()
     # test_video()
