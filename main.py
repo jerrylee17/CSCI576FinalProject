@@ -1,5 +1,5 @@
 import sys
-from util.io import readVideo, displayVideo
+from util.io import read_video, display_video
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
@@ -7,7 +7,7 @@ from typing import List
 def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
-    input_frames: List[Frame] = readVideo(input_video_path)
+    input_frames: List[Frame] = read_video(input_video_path)
 
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
