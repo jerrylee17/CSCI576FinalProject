@@ -78,7 +78,7 @@ def read_video(file_path: str) -> List[List[List[List[int]]]]:
 def play_video(fps: int):
     """Play the generated video."""
     delay = round(1000 / fps)
-    cap = cv2.VideoCapture('test.mp4')
+    cap = cv2.VideoCapture('../output/test/mp4')
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
@@ -94,14 +94,14 @@ def play_video(fps: int):
 
 def display_video(frames: List[Frame]):
     """Generate resultant video, and play it by calling play_video."""
-    video_dims = (490, 270)
+    video_dims = (frames[0].width, frames[0].height)
     fourcc = cv2.VideoWriter_fourcc(*'avc1')
-    video = cv2.VideoWriter("test.mp4", fourcc, FPS, video_dims)
+    video = cv2.VideoWriter("../output/test/mp4", fourcc, FPS, video_dims)
     img = Image.new('RGB', video_dims, color='darkred')
     for i in range(len(frames)):
         frame = frames[i].get_frame_data()
-        for col in range(490):
-            for row in range(270):
+        for col in range(frames[0].width):
+            for row in range(frames[0].height):
                 img.putpixel((col, row), (frame[row][col][0], frame[row][col][1], frame[row][col][2]))
 
         frame_cvt = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGB2BGR)
