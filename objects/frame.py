@@ -22,11 +22,14 @@ class Frame:
 
     def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
+        pixels = np.array(pixels)
         split_x = [x for x in range(0, self.width, MACRO_SIZE)]
         split_y = [y for y in range(0, self.height, MACRO_SIZE)]
         for x in split_x:
             for y in split_y:
                 data = pixels[x:x + MACRO_SIZE, y:y + MACRO_SIZE]
+                # Debug
+                if (len(data) == 0): print(x,y)
                 block = Block(data, self.index, (x, y))
                 self.blocks.append(block)
 
