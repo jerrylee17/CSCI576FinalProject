@@ -44,8 +44,6 @@ def read_rgb_image(file_name: str, index, width: int, height: int) -> Frame:
             mode='constant', constant_values=0)
         frame = Frame(index, width + pad_y, height + pad_x, pad_x, pad_y)
         frame.read_into_blocks(image)
-        # test = frame.get_frame_data()
-        # print(test)
         return frame
 
 
@@ -55,7 +53,6 @@ def display_frame(frame: Frame):
     pixels = frame.get_frame_data()  # Command this line when test
     for col in range(frame.width):
         for row in range(frame.height):
-            # print(len(pixels), len(pixels[0]))
             img.putpixel((col, row), (pixels[row][col][0], pixels[row][col][1], pixels[row][col][2]))
     img.show()
 
@@ -91,7 +88,6 @@ def read_video(file_path: str) -> List[Frame]:
         image_name = f"{file_path}/{file_name}"
         image = read_rgb_image(image_name, index, width, height)
         frames.append(image)
-        # break
     return frames
 
 
