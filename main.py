@@ -1,5 +1,5 @@
 import sys
-from util.io import read_video, display_video
+from util.io import read_video, display_video, display_frame
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
@@ -15,15 +15,16 @@ def main():
     background: Terrain
     foreground: List[Terrain]
 
-    background, foreground = get_foreground_and_background(input_frames)
+    # background, foreground = get_foreground_and_background(input_frames)
 
     # Output step:
     # 1. Display motion trails
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
-    display_motion_trails(background, foreground)
-    display_video_around_foreground(background, foreground)
-    display_video_no_objects(background)
+    # display_motion_trails(background, foreground)
+    # display_video_around_foreground(background, foreground)
+    # display_video_no_objects(background)
+    display_frame(input_frames[0])
 
 def display_motion_trails(background, foreground):
     """Display motion trails"""

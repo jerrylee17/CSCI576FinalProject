@@ -2,8 +2,9 @@ from PIL import Image
 from objects.frame import Frame
 from typing import List
 from objects.constants import FPS, MACRO_SIZE
+from os import listdir
 import cv2
-import numpy
+import numpy as np
 
 
 def get_zero_padding_size(width: int, height: int):
@@ -16,41 +17,35 @@ def get_zero_padding_size(width: int, height: int):
     if zero_padding_rows == MACRO_SIZE:
         zero_padding_rows = 0
 
-    return zero_padding_cols, zero_padding_rows
+    return zero_padding_rows, zero_padding_cols
 
 
-def read_rgb_image(file_name: str, width: int, height: int) -> List[List[List[int]]]:
+def read_rgb_image(file_name: str, index, width: int, height: int) -> Frame:
     """Read a single frame."""
-    file = open(file_name, "rb")
-    content = [byte for byte in bytearray(file.read())]
+    with open(file_name, "rb") as f:
+        content = [byte for byte in bytearray(f.read())]
+        pad_x, pad_y = get_zero_padding_size(width, height)
 
-    zero_cols, zero_rows = get_zero_padding_size(width, height)
-
-    image = []
-    idx = 0
-    for col in range(height + zero_rows):
-        col_list = []
-
-        if col >= height:
-            for row in range(width + zero_cols):
-                rgb_list = [0, 0, 0]
-                col_list.append(rgb_list)
-            image.append(col_list)
-            continue
-
-        for row in range(width + zero_cols):
-            if row < width and col < height:
+        image = []
+        idx = 0
+        for col in range(height):
+            col_list = []
+            for row in range(width):
                 # Separate R, G, and B values
                 rgb_list = [content[3 * idx] & 0xff, content[3 * idx + 1] & 0xff, content[3 * idx + 2] & 0xff]
                 col_list.append(rgb_list)
                 idx += 1
-            else:
-                rgb_list = [0, 0, 0]
-                col_list.append(rgb_list)
 
-        image.append(col_list)
-
-    return image
+            image.append(col_list)
+        image = np.array(image)
+        image = np.pad(
+            image, 
+            [(0, pad_x), (0, pad_y), (0, 0)],
+            mode='constant', constant_values=0)
+        frame = Frame(index, width + pad_y, height + pad_x)
+        frame.read_into_blocks(image)
+        test = frame.get_frame_data()
+        return frame
 
 
 def display_frame(frame: Frame):
@@ -65,28 +60,35 @@ def display_frame(frame: Frame):
 
 
 def get_video_info_from_name(file_path: str) -> dict:
-    """Obtain frame number, width, and height from name."""
-    split_path = file_path.split("/")
-    file_name = split_path[-2] if len(split_path[-1]) == 0 else split_path[-1]
-    split_name = file_name.split("_")
+    """Obtain frame number, width, and height from name.
+    Returns:
+        file_name
+        width
+        height
+        number of frames
+    """
+    file_name = file_path.split('/')[-1]
+    _, width, height, num_frames = file_name.split('_')
 
-    return {
-        "name": split_name[0],
-        "width": int(split_name[1]),
-        "height": int(split_name[2]),
-        "frame_number": int(split_name[3])
-    }
+    return [
+        file_name,
+        int(width),
+        int(height),
+        int(num_frames)
+    ]
 
 
-def read_video(file_path: str) -> List[List[List[List[int]]]]:
+def read_video(file_path: str) -> List[Frame]:
     """Read videos into frames."""
     frames = []
-    info = get_video_info_from_name(file_path)
-    for i in range(1, info["frame_number"] + 1):
-        image_name = file_path + info["name"] + "_" + str(info["width"]) + "_" + str(info["height"]) + "_" \
-                     + str(info["frame_number"]) + "." + str(i).zfill(3) + ".rgb"
-        image = read_rgb_image(image_name, info["width"], info["height"])
+    file_name, width, height, num_frames = get_video_info_from_name(file_path)
+    # Using listdir rather than num frames
+    file_names = listdir(file_path)
+    for index, file_name in enumerate(file_names):
+        image_name = f"{file_path}/{file_name}"
+        image = read_rgb_image(image_name, index, width, height)
         frames.append(image)
+        break
     return frames
 
 
@@ -119,7 +121,7 @@ def display_video(frames: List[Frame]):
             for row in range(frames[0].height):
                 img.putpixel((col, row), (frame[row][col][0], frame[row][col][1], frame[row][col][2]))
 
-        frame_cvt = cv2.cvtColor(numpy.array(img), cv2.COLOR_RGB2BGR)
+        frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         video.write(frame_cvt)
 
         # cv2.imshow('CSCI 576 Project', frame_cvt) # Display video on the fly

@@ -25,11 +25,9 @@ class Frame:
         pixels = np.array(pixels)
         split_x = [x for x in range(0, self.width, MACRO_SIZE)]
         split_y = [y for y in range(0, self.height, MACRO_SIZE)]
-        for x in split_x:
-            for y in split_y:
-                data = pixels[x:x + MACRO_SIZE, y:y + MACRO_SIZE]
-                # Debug
-                if (len(data) == 0): print(x,y)
+        for y in split_y:
+            for x in split_x:
+                data = pixels[y:y + MACRO_SIZE, x:x + MACRO_SIZE,]
                 block = Block(data, self.index, (x, y))
                 self.blocks.append(block)
 
@@ -49,24 +47,30 @@ class Frame:
         """Retrieve all values in frame"""
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE
-        blocks = np.array(self.blocks).reshape(x_blocks, y_blocks)
+        blocks = np.array(self.blocks).reshape(y_blocks, x_blocks)
         frame_data = []
         for block_row in blocks:
+            # print([np.array(x.data).shape for x in block_row])
             block_row = [x.data for x in block_row]
             block_row = np.concatenate(block_row, axis = 1)
             frame_data.extend(block_row)
+        frame_data = np.array(frame_data)
         return frame_data
 
 def test_read_into_blocks():
-    test = np.array([[[randint(0, 255) for i in range(3)] for j in range(480)] for k in range(640)])
-    # test = np.array([[0 for j in range(480)] for k in range(640)])
-    frame = Frame(0, 640, 480)
+    width = 496
+    height = 272
+    test = np.array([[[randint(0, 255) for i in range(3)] for j in range(width)] for k in range(height)])
+    # test = np.array([[0 for j in range(width)] for k in range(height)])
+    frame = Frame(0, height, width)
     frame.read_into_blocks(test)
     # Check first and last frame
-    first_frame_expected = test[0:16, 0:16]
-    last_frame_expected = test[624:640, 464:480]
+    # first_frame_expected = test[0:16, 0:16]
+    # last_frame_expected = test[height - 16:height, width - 16:width]
     # print(first_frame_expected == frame.blocks[0].data)
     # print(last_frame_expected == frame.blocks[-1].data)
     frame_data = frame.get_frame_data()
     print("===========")
-    print(frame_data == test)
+    print(frame_data.shape)
+
+# test_read_into_blocks()

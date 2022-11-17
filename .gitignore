@@ -6,3 +6,9 @@
 
 # testing  file
 test.txt
+
+# Pycache
+__pycache__
+
+# Videos
+videos/
