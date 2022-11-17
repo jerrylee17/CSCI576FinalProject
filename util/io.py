@@ -42,9 +42,10 @@ def read_rgb_image(file_name: str, index, width: int, height: int) -> Frame:
             image, 
             [(0, pad_x), (0, pad_y), (0, 0)],
             mode='constant', constant_values=0)
-        frame = Frame(index, width + pad_y, height + pad_x)
+        frame = Frame(index, width + pad_y, height + pad_x, pad_x, pad_y)
         frame.read_into_blocks(image)
-        test = frame.get_frame_data()
+        # test = frame.get_frame_data()
+        # print(test)
         return frame
 
 
@@ -59,7 +60,7 @@ def display_frame(frame: Frame):
     img.show()
 
 
-def get_video_info_from_name(file_path: str) -> dict:
+def get_video_info_from_name(file_path: str) -> List:
     """Obtain frame number, width, and height from name.
     Returns:
         file_name
@@ -84,18 +85,20 @@ def read_video(file_path: str) -> List[Frame]:
     file_name, width, height, num_frames = get_video_info_from_name(file_path)
     # Using listdir rather than num frames
     file_names = listdir(file_path)
+    file_names.sort()
     for index, file_name in enumerate(file_names):
+        if file_name.endswith(".DS_Store"): continue
         image_name = f"{file_path}/{file_name}"
         image = read_rgb_image(image_name, index, width, height)
         frames.append(image)
-        break
+        # break
     return frames
 
 
 def play_video(fps: int):
     """Play the generated video."""
     delay = round(1000 / fps)
-    cap = cv2.VideoCapture('../output/test/mp4')
+    cap = cv2.VideoCapture("test.mp4")
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
@@ -111,14 +114,14 @@ def play_video(fps: int):
 
 def display_video(frames: List[Frame]):
     """Generate resultant video, and play it by calling play_video."""
-    video_dims = (frames[0].width, frames[0].height)
+    video_dims = (frames[0].width - frames[0].pad_y, frames[0].height - frames[0].pad_x)
     fourcc = cv2.VideoWriter_fourcc(*'avc1')
-    video = cv2.VideoWriter("../output/test/mp4", fourcc, FPS, video_dims)
+    video = cv2.VideoWriter("test.mp4", fourcc, FPS, video_dims)
     img = Image.new('RGB', video_dims, color='darkred')
     for i in range(len(frames)):
         frame = frames[i].get_frame_data()
-        for col in range(frames[0].width):
-            for row in range(frames[0].height):
+        for col in range(frames[0].width - frames[0].pad_y):
+            for row in range(frames[0].height - frames[0].pad_x):
                 img.putpixel((col, row), (frame[row][col][0], frame[row][col][1], frame[row][col][2]))
 
         frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
@@ -131,3 +134,11 @@ def display_video(frames: List[Frame]):
     # Display video after generation
     play_video(FPS)
 
+
+def test_video():
+    video = read_video("../videos/SAL_490_270_40")
+    display_video(video)
+
+
+if __name__ == '__main__':
+    test_video()

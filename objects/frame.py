@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 # Holds a single frame
 class Frame:
-    def __init__(self, index, width, height) -> None:
+    def __init__(self, index, width, height, pad_x, pad_y) -> None:
         """
         index - chronological index of frame
         position - relative to frame 0, position of frame
@@ -19,6 +19,8 @@ class Frame:
         self.height: int = height
         # Store values in the blocks within the frame
         self.blocks: List[Block, Block] = []
+        self.pad_x: int = pad_x
+        self.pad_y: int = pad_y
 
     def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
