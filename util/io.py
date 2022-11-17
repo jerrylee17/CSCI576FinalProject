@@ -133,12 +133,3 @@ def display_video(frames: List[Frame]):
     video.release()
     # Display video after generation
     play_video(FPS)
-
-
-def test_video():
-    video = read_video("../videos/SAL_490_270_40")
-    display_video(video)
-
-
-if __name__ == '__main__':
-    test_video()
