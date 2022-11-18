@@ -40,8 +40,10 @@ class Terrain:
                 x_start = frame.position[0] + block.position[0] + x_offset
                 x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
                 # If these pixels are untouched, directly replace them
-                if all(
-                    self.pixels[y_start: y_end, x_start: x_end] == [-1, -1, -1]):
+                untouched_pixels = np.zeros((y_length, x_length, 3))
+                untouched_pixels.fill(-1)
+                if np.array_equal(self.pixels[y_start: y_end, x_start: x_end],
+                    untouched_pixels):
                     self.pixels[y_start: y_end, x_start: x_end] = block.data
                 # Otherwise, need some calculations
                 else:
@@ -51,7 +53,7 @@ class Terrain:
     def get_terrain(self) -> List[List[List[int]]]:
         """Return entire terrain"""
         self.stitch_frames()
-        return self.frames
+        return self.pixels
 
     def synchronize(self, background):
         """Synchronize foreground pixel indecies with background terrain size"""

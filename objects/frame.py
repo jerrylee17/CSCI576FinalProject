@@ -1,5 +1,5 @@
 from objects.block import Block
-from objects.constants import MACRO_SIZE
+from objects.constants import MACRO_SIZE, THREHOLDX, THREHOLDY
 from random import randint
 import numpy as np
 from typing import List, Tuple
@@ -13,7 +13,8 @@ class Frame:
         vector - motion vector of frame (from previous frame)
         """
         self.index: int = index
-        self.position: Tuple[int, int] = (index * 5, 0)
+        # Revert position
+        self.position: Tuple[int, int]
         self.vector: Tuple[int, int]
         self.width: int = width
         self.height: int = height

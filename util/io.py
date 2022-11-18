@@ -91,7 +91,10 @@ def display_frame(frame: Frame):
     pixels = frame.get_frame_data()  # Command this line when test
     for col in range(frame.width):
         for row in range(frame.height):
-            img.putpixel((col, row), (pixels[row][col][0], pixels[row][col][1], pixels[row][col][2]))
+            img.putpixel((col, row), (
+                int(pixels[row][col][0]),
+                int(pixels[row][col][1]),
+                int(pixels[row][col][2])))
     img.show()
 
 
