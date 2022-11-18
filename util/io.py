@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 
 
-def get_zero_padding_size(width: int, height: int):
+def get_zero_padding_size_(width: int, height: int):
     """Calculate the cols and rows of zeros that need to be padded."""
     zero_padding_cols = MACRO_SIZE - (width % MACRO_SIZE)
     if zero_padding_cols == MACRO_SIZE:
@@ -20,11 +20,11 @@ def get_zero_padding_size(width: int, height: int):
     return zero_padding_rows, zero_padding_cols
 
 
-def read_rgb_image(file_name: str, index, width: int, height: int) -> Frame:
+def read_rgb_image_(file_name: str, index, width: int, height: int) -> Frame:
     """Read a single frame."""
     with open(file_name, "rb") as f:
         content = [byte for byte in bytearray(f.read())]
-        pad_x, pad_y = get_zero_padding_size(width, height)
+        pad_x, pad_y = get_zero_padding_size_(width, height)
 
         image = []
         idx = 0
@@ -47,17 +47,24 @@ def read_rgb_image(file_name: str, index, width: int, height: int) -> Frame:
         return frame
 
 
-def display_frame(frame: Frame):
-    """Displays a given frame."""
-    img = Image.new("RGB", (frame.width, frame.height))
-    pixels = frame.get_frame_data()  # Command this line when test
-    for col in range(frame.width):
-        for row in range(frame.height):
-            img.putpixel((col, row), (pixels[row][col][0], pixels[row][col][1], pixels[row][col][2]))
-    img.show()
+def play_video_(fps: int):
+    """Play the generated video."""
+    delay = round(1000 / fps)
+    cap = cv2.VideoCapture("test.mp4")
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            cv2.imshow('CSCI 576 Project', frame)
+            # & 0xFF is required for a 64-bit system
+            if cv2.waitKey(delay) & 0xFF == ord('q'):
+                break
+        else:
+            break
+    cap.release()
+    cv2.destroyAllWindows()
 
 
-def get_video_info_from_name(file_path: str) -> List:
+def get_video_info_from_name_(file_path: str) -> List:
     """Obtain frame number, width, and height from name.
     Returns:
         file_name
@@ -76,36 +83,29 @@ def get_video_info_from_name(file_path: str) -> List:
     ]
 
 
+def display_frame(frame: Frame):
+    """Displays a given frame."""
+    img = Image.new("RGB", (frame.width, frame.height))
+    pixels = frame.get_frame_data()  # Command this line when test
+    for col in range(frame.width):
+        for row in range(frame.height):
+            img.putpixel((col, row), (pixels[row][col][0], pixels[row][col][1], pixels[row][col][2]))
+    img.show()
+
+
 def read_video(file_path: str) -> List[Frame]:
     """Read videos into frames."""
     frames = []
-    file_name, width, height, num_frames = get_video_info_from_name(file_path)
+    file_name, width, height, num_frames = get_video_info_from_name_(file_path)
     # Using listdir rather than num frames
     file_names = listdir(file_path)
     file_names.sort()
     for index, file_name in enumerate(file_names):
         if file_name.endswith(".DS_Store"): continue
         image_name = f"{file_path}/{file_name}"
-        image = read_rgb_image(image_name, index, width, height)
+        image = read_rgb_image_(image_name, index, width, height)
         frames.append(image)
     return frames
-
-
-def play_video(fps: int):
-    """Play the generated video."""
-    delay = round(1000 / fps)
-    cap = cv2.VideoCapture("test.mp4")
-    while cap.isOpened():
-        ret, frame = cap.read()
-        if ret:
-            cv2.imshow('CSCI 576 Project', frame)
-            # & 0xFF is required for a 64-bit system
-            if cv2.waitKey(delay) & 0xFF == ord('q'):
-                break
-        else:
-            break
-    cap.release()
-    cv2.destroyAllWindows()
 
 
 def display_video(frames: List[Frame]):
@@ -128,4 +128,4 @@ def display_video(frames: List[Frame]):
 
     video.release()
     # Display video after generation
-    play_video(FPS)
+    play_video_(FPS)
