@@ -15,7 +15,7 @@ def main():
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
     background: Terrain = Terrain(input_frames, 0)
-    foreground: List[Terrain]
+    foreground: List[Frame]
 
     # background, foreground = get_foreground_and_background(input_frames)
 
