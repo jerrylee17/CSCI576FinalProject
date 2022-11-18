@@ -1,5 +1,6 @@
 import sys
 from util.io import read_video, display_video, display_frame
+from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
@@ -7,12 +8,13 @@ from typing import List
 def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
+    print("Reading video")
     input_frames: List[Frame] = read_video(input_video_path)
 
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
-    background: Terrain
+    # background: Terrain = Terrain(input_frames, 0)
     foreground: List[Terrain]
 
     # background, foreground = get_foreground_and_background(input_frames)
@@ -24,7 +26,9 @@ def main():
     # display_motion_trails(background, foreground)
     # display_video_around_foreground(background, foreground)
     # display_video_no_objects(background)
-    display_frame(input_frames[0])
+    print("Writing video")
+    display_video(input_frames)
+    print("Program exited successfully")
 
 def display_motion_trails(background, foreground):
     """Display motion trails"""

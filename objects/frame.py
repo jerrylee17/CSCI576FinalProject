@@ -6,25 +6,44 @@ from typing import List, Tuple
 
 # Holds a single frame
 class Frame:
-    def __init__(self, index, width, height, pad_x, pad_y) -> None:
+    def __init__(self, index, width, height) -> None:
         """
         index - chronological index of frame
         position - relative to frame 0, position of frame
         vector - motion vector of frame (from previous frame)
         """
         self.index: int = index
-        self.position: Tuple[int, int]
+        self.position: Tuple[int, int] = (index * 5, 0)
         self.vector: Tuple[int, int]
         self.width: int = width
         self.height: int = height
         # Store values in the blocks within the frame
         self.blocks: List[Block, Block] = []
-        self.pad_x: int = pad_x
-        self.pad_y: int = pad_y
+        self.pad_x = 0
+        self.pad_y = 0
+
+    def get_zero_padding_size_(self, width: int, height: int):
+        """Calculate the cols and rows of zeros that need to be padded."""
+        zero_padding_cols = MACRO_SIZE - (width % MACRO_SIZE)
+        if zero_padding_cols == MACRO_SIZE:
+            zero_padding_cols = 0
+
+        zero_padding_rows = MACRO_SIZE - (height % MACRO_SIZE)
+        if zero_padding_rows == MACRO_SIZE:
+            zero_padding_rows = 0
+
+        return zero_padding_rows, zero_padding_cols
 
     def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
         pixels = np.array(pixels)
+        self.pad_x, self.pad_y = self.get_zero_padding_size_(self.width, self.height)
+        self.width = self.width + self.pad_y
+        self.height = self.height + self.pad_x
+        pixels = np.pad(
+            pixels, 
+            [(0, self.pad_x), (0, self.pad_y), (0, 0)],
+            mode='constant', constant_values=0)
         split_x = [x for x in range(0, self.width, MACRO_SIZE)]
         split_y = [y for y in range(0, self.height, MACRO_SIZE)]
         for y in split_y:
