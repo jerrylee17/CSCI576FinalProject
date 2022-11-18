@@ -35,15 +35,31 @@ class Frame:
 
     def calculate_average_motion_vector(self) -> None:
         """Determine camera movement by average motion vector"""
-        pass
+        #assume self.blocks is not empty
+        numBlocks=len(self.blocks)
+        summ=[0,0]
+        for i in range(numBlocks):
+            tmpVector=self.blocks[i].vector
+            summ[0]+=tmpVector[0]
+            summ[1]+=tmpVector[1]
+        self.vector=(round(summ[0]/numBlocks),round(summ[1]/numBlocks))
 
     def calculate_mode_motion_vector(self) -> None:
         """Determine camera movement by most occuring motion vector"""
-        pass
+        allVector=[]
+        for block in self.blocks:
+            allVector.append(block.vector)
+        self.vector=max(set(allVector), key = allVector.count)
 
     def set_block_visibility(self) -> None:
         """Set blocks to foreground or background"""
-        pass
+        numBlocks=len(self.blocks)
+        threhold=[THREHOLDX,THREHOLDY]
+        for i in range(numBlocks):
+            if self.blocks[i].vector[0]>threhold[0] and self.blocks[i].vector[1]>threhold[1]:
+                self.blocks[i].type=1
+            else:
+                self.blocks[i].type=0
 
     def get_frame_data(self) -> List[List[List[int]]]:
         """Retrieve all values in frame"""
@@ -75,4 +91,45 @@ def test_read_into_blocks():
     print("===========")
     print(frame_data.shape)
 
+def test_calculate_mode_motion_vector():
+    width = 496
+    height = 272
+    frame = Frame(0, height, width,0,0)
+    testVector=[(1,1),(2,2),(2,2),(4,4)]
+    for i in range(len(testVector)):
+        testBlock=Block(0,0,0)
+        testBlock.vector=testVector[i]
+        frame.blocks.append(testBlock)
+    frame.calculate_mode_motion_vector()
+    print(frame.vector)
+
+def test_calculate_average_motion_vector():
+    width = 496
+    height = 272
+    frame = Frame(0, height, width,0,0)
+    testVector=[(1,1),(2,2),(3,3),(4,4),(5,5)]
+    for i in range(len(testVector)):
+        testBlock=Block(0,0,0)
+        testBlock.vector=testVector[i]
+        frame.blocks.append(testBlock)
+    frame.calculate_average_motion_vector()
+    print(frame.vector)
+
+def test_set_block_visibility():
+    width = 496
+    height = 272
+    frame = Frame(0, height, width,0,0)
+    testVector=[(1,1),(2,2),(2,2),(4,4)]
+    for i in range(len(testVector)):
+        testBlock=Block(0,0,0)
+        testBlock.vector=testVector[i]
+        frame.blocks.append(testBlock)
+    frame.set_block_visibility()
+    for i in frame.blocks:
+        print("The type for "+str(i.vector)+" is: "+str(i.type))
+
+
+# test_calculate_mode_motion_vector()
+# test_calculate_average_motion_vector()
+# test_set_block_visibility()
 # test_read_into_blocks()
