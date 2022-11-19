@@ -13,7 +13,7 @@ class Block:
         data_type = hsv or rgb
         index - chronological index of frame that holds block
         position - relative to (0,0) within the frame, position of block
-        type - foreground(1) or background(0)
+        type - background(0), foreground(1)
         vector - motion vector of block
         """
     self.data: List[List[List[int]]] = data

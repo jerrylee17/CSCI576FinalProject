@@ -1,7 +1,8 @@
 from PIL import Image
 from objects.frame import Frame
-from typing import List
+from objects.terrain import Terrain
 from objects.constants import FPS, MACRO_SIZE
+from typing import List
 from os import listdir
 import cv2
 import numpy as np
@@ -24,7 +25,7 @@ def read_rgb_image_(file_name: str, index, width: int, height: int) -> Frame:
     """Read a single frame."""
     with open(file_name, "rb") as f:
         content = [byte for byte in bytearray(f.read())]
-        pad_x, pad_y = get_zero_padding_size_(width, height)
+        # pad_x, pad_y = get_zero_padding_size_(width, height)
 
         image = []
         idx = 0
@@ -38,11 +39,12 @@ def read_rgb_image_(file_name: str, index, width: int, height: int) -> Frame:
 
             image.append(col_list)
         image = np.array(image)
-        image = np.pad(
-            image, 
-            [(0, pad_x), (0, pad_y), (0, 0)],
-            mode='constant', constant_values=0)
-        frame = Frame(index, width + pad_y, height + pad_x, pad_x, pad_y)
+        # image = np.pad(
+        #     image, 
+        #     [(0, pad_x), (0, pad_y), (0, 0)],
+        #     mode='constant', constant_values=0)
+        # frame = Frame(index, width + pad_y, height + pad_x, pad_x, pad_y)
+        frame = Frame(index, width, height)
         frame.read_into_blocks(image)
         return frame
 
@@ -89,7 +91,10 @@ def display_frame(frame: Frame):
     pixels = frame.get_frame_data()  # Command this line when test
     for col in range(frame.width):
         for row in range(frame.height):
-            img.putpixel((col, row), (pixels[row][col][0], pixels[row][col][1], pixels[row][col][2]))
+            img.putpixel((col, row), (
+                int(pixels[row][col][0]),
+                int(pixels[row][col][1]),
+                int(pixels[row][col][2])))
     img.show()
 
 
