@@ -13,6 +13,8 @@ class Terrain:
         """
         self.pixels: List[List[List[int]]]
         self.frames: List[Frame] = frames
+        # List of frame offsets [x_offset, y_offset]
+        self.frame_offsets: List[List[int]] = []
         self.mode: int = mode
     
     def get_frame_position_bounds_(self):
@@ -49,6 +51,7 @@ class Terrain:
                 else:
                     # Temporarily setting this right now
                     self.pixels[y_start: y_end, x_start: x_end] = block.data
+                    # Please set self.frame_offsets[i] as [x_offset, y_offset]
 
     def get_terrain(self) -> List[List[List[int]]]:
         """Return entire terrain"""
