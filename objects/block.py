@@ -20,8 +20,8 @@ class Block:
     self.data_type = "rgb"
     self.index: int = index
     self.position: Tuple[int, int] = position
-    self.type: int
-    self.vector: Tuple[int, int]
+    self.type: int = 0
+    self.vector: Tuple[int, int] = (0, 0)
 
   def calculate_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
     """Calculates motion vector based on MAD"""

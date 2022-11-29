@@ -19,7 +19,7 @@ class Frame:
         self.width: int = width
         self.height: int = height
         # Store values in the blocks within the frame
-        self.blocks: List[Block, Block] = []
+        self.blocks: List[Block] = []
         self.pad_x = 0
         self.pad_y = 0
 
@@ -34,6 +34,12 @@ class Frame:
             zero_padding_rows = 0
 
         return zero_padding_rows, zero_padding_cols
+
+    def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
+        for i in range(len(self.blocks)):
+            self.blocks[i].calculate_motion_vector(previous_frame_data)
+            if not self.blocks[i].vector:
+                print(i)
 
     def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
@@ -86,6 +92,23 @@ class Frame:
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE
         blocks = np.array(self.blocks).reshape(y_blocks, x_blocks)
+        frame_data = []
+        for block_row in blocks:
+            # print([np.array(x.data).shape for x in block_row])
+            block_row = [x.data for x in block_row]
+            block_row = np.concatenate(block_row, axis = 1)
+            frame_data.extend(block_row)
+        frame_data = np.array(frame_data)
+        return frame_data
+
+    def get_frame_foreground(self) -> List[List[List[int]]]:
+        x_blocks = self.width // MACRO_SIZE
+        y_blocks = self.height // MACRO_SIZE
+        blocks = np.array(self.blocks)
+        for block in blocks:
+            if block.type == 0:
+                block.data = np.zeros((MACRO_SIZE, MACRO_SIZE))
+        blocks = blocks.reshape(y_blocks, x_blocks)
         frame_data = []
         for block_row in blocks:
             # print([np.array(x.data).shape for x in block_row])
