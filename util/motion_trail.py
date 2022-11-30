@@ -20,9 +20,6 @@ from objects.terrain import Terrain
 
 
 def composite_trial(background: Terrain, frames: List[Frame]):
-    foreground = []
-    for frame in range(0, len(frames), 50):
-        foreground.append(frame)
-    background.paste_foreground_frames(foreground)
+    background.paste_foreground_frames(frames[::50])
 
 
