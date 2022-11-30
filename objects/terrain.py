@@ -63,3 +63,13 @@ class Terrain:
         if self.mode == 0:
             return
         pass
+
+    def paste_foreground_frames(self, frames: List[Frame]):
+        for frame in frames:
+            for block in frame.blocks:
+                # Must be foreground
+                if block.type != 1: continue
+                y_start = frame.position[1] + block.position[1] + self.y_offset
+                x_start = frame.position[0] + block.position[0] + self.x_offset
+                x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
+                self.pixels[y_start: y_end, x_start: x_end] = block.data
