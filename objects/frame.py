@@ -1,9 +1,9 @@
-from objects.block import Block
+from objects.block import Block,rgb_normalized,hsv_denormalized
 from objects.constants import MACRO_SIZE, THREHOLDX, THREHOLDY
 from random import randint
 import numpy as np
 from typing import List, Tuple
-
+from colorsys import rgb_to_hsv, hsv_to_rgb
 # Holds a single frame
 class Frame:
     def __init__(self, index, width, height) -> None:
@@ -36,6 +36,7 @@ class Frame:
         return zero_padding_rows, zero_padding_cols
 
     def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
+        self.frame_convert_to_hsv(previous_frame_data)
         for i in range(len(self.blocks)):
             self.blocks[i].calculate_motion_vector(previous_frame_data)
             if not self.blocks[i].vector:
@@ -56,6 +57,7 @@ class Frame:
         for y in split_y:
             for x in split_x:
                 data = pixels[y:y + MACRO_SIZE, x:x + MACRO_SIZE,]
+
                 block = Block(data, self.index, (x, y))
                 self.blocks.append(block)
 
@@ -134,6 +136,14 @@ class Frame:
             block_row = np.concatenate(block_row, axis = 1)
             frame_data.extend(block_row)
         frame_data = np.array(frame_data)
+        return frame_data
+
+    def frame_convert_to_hsv(self, frame_data: List[List[List[int]]]) -> None:
+        for x in range(len(frame_data)):
+            for y in range(len(frame_data[0])):
+                r, g, b = frame_data[x][y]
+                r, g, b = rgb_normalized(r, g, b)
+                frame_data[x][y] = hsv_denormalized(rgb_to_hsv(r, g, b))
         return frame_data
 
 def test_read_into_blocks():
