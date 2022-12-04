@@ -1,5 +1,5 @@
 import sys
-from util.io import read_video, display_video, display_frame
+from util.io import read_video, display_video, display_frame, display_video_foreground
 from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
@@ -9,7 +9,7 @@ def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
     print("Reading video")
-    input_frames: List[Frame] = read_video(input_video_path)
+    input_frames: List[Frame] = read_video(input_video_path)[:2]
 
     print("Calculating motion vectors")
     # Calculate the first frame
@@ -17,14 +17,16 @@ def main():
     # input_frames[0].calculate_block_motion_vector(previous_frame_data)
     # input_frames[0].calculate_average_motion_vector()
     # input_frames[0].set_block_visibility()
+    input_frames[0].position = (0, 0)
 
     for i in range(len(input_frames) - 1):
-        print(f'Processing frame {i+i}/{len(input_frames)}')
+        print(f'Processing frame {i+1}/{len(input_frames)}')
         previous_frame_data = input_frames[i].get_frame_data()
         input_frames[i+1].calculate_block_motion_vector(previous_frame_data)
         # Attempt getting motion vector with average
         input_frames[i+1].calculate_average_motion_vector()
         input_frames[i+1].set_block_visibility()
+        input_frames[i+1].calculate_frame_position(input_frames[i])
 
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
@@ -36,7 +38,10 @@ def main():
     background_pixels = background.get_terrain()
     background_frame = Frame(-1, len(background_pixels[0]), len(background_pixels))
     background_frame.read_into_blocks(background_pixels)
+    display_frame(input_frames[0])
     display_frame(background_frame)
+    print("Displaying foreground")
+    display_video_foreground(foreground)
 
     # background, foreground = get_foreground_and_background(input_frames)
 
@@ -44,13 +49,16 @@ def main():
     # 1. Display motion trails
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
-    # display_motion_trails(background, foreground)
-    # display_video_around_foreground(background, foreground)
-    # display_video_no_objects(background)
-    # print("Writing video")
-    # display_video(input_frames)
-    # print("Program exited successfully")
 
+    # video_no_objects = display_video_no_objects(background)
+    # video_around_foreground = display_video_around_foreground(background)
+    # composite_trial = composite_trial(background, foreground)
+
+
+# Do this last
+def composite_trial(background: Terrain, frames: List[Frame]):
+    background.paste_foreground_frames(frames[::50])
+    return background
 
 def display_video_around_foreground(background: Terrain):
     """Display video around foreground"""
