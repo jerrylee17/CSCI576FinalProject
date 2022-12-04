@@ -95,3 +95,13 @@ class Terrain:
                 new_frame[block_y_start: block_y_end, block_x_start: block_x_end] = block.data
             frames.append(new_frame)
         return frames
+
+    def get_background_frame_positions(self) -> List[List[List[List[int]]]]:
+        frames = []
+        for frame in self.frames:
+            x_start = self.x_offset + frame.position[0]
+            y_start = self.y_offset + frame.position[1]
+            x_end, y_end = x_start + frame.width, y_start + frame.height
+            new_frame = self.pixels[y_start: y_end, x_start: x_end]
+            frames.append(new_frame)
+        return frames

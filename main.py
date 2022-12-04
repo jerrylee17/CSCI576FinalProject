@@ -30,21 +30,14 @@ def main():
     display_video(input_frames)
     print("Program exited successfully")
 
-def display_motion_trails(background, foreground):
-    """Display motion trails"""
-    pass
 
-def display_video_around_foreground(background, foreground):
+def display_video_around_foreground(background: Terrain):
     """Display video around foreground"""
-    pass
+    return background.get_frames_around_foreground()
 
-def display_video_no_objects(background):
+def display_video_no_objects(background: Terrain):
     """Display video with objects removed"""
-    pass
-
-def get_foreground_and_background(frames):
-    """Wrapper function for getting foreground and background"""
-    pass
+    return background.get_background_frame_positions()
 
 if __name__ == '__main__':
     main()
