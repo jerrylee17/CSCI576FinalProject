@@ -40,6 +40,7 @@ def main():
     background_frame.read_into_blocks(background_pixels)
     display_frame(input_frames[0])
     display_frame(background_frame)
+    display_video(foreground)
 
     # background, foreground = get_foreground_and_background(input_frames)
 
