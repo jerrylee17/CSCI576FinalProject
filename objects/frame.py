@@ -108,8 +108,8 @@ class Frame:
                 y_count += 1
                 x_sum += y
                 x_sum += x
-        x_center = MACRO_SIZE * (x_sum / x_count)
-        y_center = MACRO_SIZE * (y_sum / y_count)
+        x_center = MACRO_SIZE * (x_sum // x_count)
+        y_center = MACRO_SIZE * (y_sum // y_count)
         return (x_center, y_center)
 
 def test_read_into_blocks():

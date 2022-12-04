@@ -76,3 +76,7 @@ class Terrain:
                 x_start = frame.position[0] + block.position[0] + self.x_offset
                 x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
                 self.pixels[y_start: y_end, x_start: x_end] = block.data
+    
+    def get_frames_around_foreground(self) -> List[Frame]:
+        for frame in self.frames:
+            pass
