@@ -158,3 +158,14 @@ def display_video(frames: List[Frame]):
     video.release()
     # Display video after generation
     play_video_(FPS)
+
+
+def read_jpg_image(file_name: str) -> Frame:
+    image = Image.open(file_name)
+    frame = Frame(0, image.size[0], image.size[1])
+    frame.read_into_blocks(image)
+    return frame
+
+# if __name__ == '__main__':
+#
+#     read_jpg_image("/Users/lyb/Documents/USC/Courses/CSCI 576 Multimedia Systems Design/Project/examples/reference_11dx_15dy.jpg")
