@@ -93,7 +93,6 @@ class Block:
     self.data_type = "hsv"
 
 
-
   def convert_to_rgb(self) -> None:
     """Convert pixels to RGB"""
     if self.data_type == "rgb":
