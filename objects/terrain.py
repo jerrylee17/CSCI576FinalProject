@@ -16,6 +16,8 @@ class Terrain:
         # List of frame offsets [x_offset, y_offset]
         self.frame_offsets: List[List[int]] = []
         self.mode: int = mode
+        self.y_offset = 0
+        self.x_offset = 0
     
     def get_frame_position_bounds_(self):
         """Returns min/max x/y for frame position"""
@@ -32,6 +34,7 @@ class Terrain:
         min_x, max_x, min_y, max_y = self.get_frame_position_bounds_()
         # Add offset from (0,0) in the terrain pixels
         x_offset, y_offset = abs(min_x), abs(min_y)
+        self.x_offset, self.y_offset = x_offset, y_offset
         x_length, y_length = max_x - min_x, max_y - min_y
         self.pixels = np.zeros((y_length, x_length, 3))
         self.pixels.fill(-1)
