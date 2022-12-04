@@ -61,6 +61,12 @@ class Frame:
                 block = Block(data, self.index, (x, y))
                 self.blocks.append(block)
 
+    def calculate_frame_position(self, previous_frame):
+        self.position = (
+            previous_frame.position[0] + self.vector[0],
+            previous_frame.position[1] + self.vector[1]
+        )
+
     def calculate_average_motion_vector(self) -> None:
         """Determine camera movement by average motion vector"""
         #assume self.blocks is not empty

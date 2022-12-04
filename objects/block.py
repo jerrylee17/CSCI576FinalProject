@@ -52,9 +52,6 @@ class Block:
     return 0 <= x <= len(previous_frame_data[0]) - MACRO_SIZE and 0 <= y <= len(
       previous_frame_data) - MACRO_SIZE
 
-
-
-
   def convert_to_hsv(self) -> None:
     """Convert pixels to HSV"""
     if self.data_type == "hsv":
