@@ -1,9 +1,9 @@
-from objects.block import Block
+from objects.block import Block,rgb_normalized,hsv_denormalized
 from objects.constants import MACRO_SIZE, THREHOLDX, THREHOLDY
 from random import randint
 import numpy as np
 from typing import List, Tuple
-
+from colorsys import rgb_to_hsv, hsv_to_rgb
 # Holds a single frame
 class Frame:
     def __init__(self, index, width, height) -> None:
@@ -19,7 +19,7 @@ class Frame:
         self.width: int = width
         self.height: int = height
         # Store values in the blocks within the frame
-        self.blocks: List[Block, Block] = []
+        self.blocks: List[Block] = []
         self.pad_x = 0
         self.pad_y = 0
 
@@ -34,6 +34,13 @@ class Frame:
             zero_padding_rows = 0
 
         return zero_padding_rows, zero_padding_cols
+
+    def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
+        self.frame_convert_to_hsv(previous_frame_data)
+        for i in range(len(self.blocks)):
+            self.blocks[i].calculate_motion_vector(previous_frame_data)
+            if not self.blocks[i].vector:
+                print(i)
 
     def read_into_blocks(self, pixels: List[List[List[int]]]) -> None:
         """Read 2D array of pixels into self.blocks"""
@@ -50,6 +57,7 @@ class Frame:
         for y in split_y:
             for x in split_x:
                 data = pixels[y:y + MACRO_SIZE, x:x + MACRO_SIZE,]
+
                 block = Block(data, self.index, (x, y))
                 self.blocks.append(block)
 
@@ -111,6 +119,32 @@ class Frame:
         x_center = MACRO_SIZE * (x_sum // x_count)
         y_center = MACRO_SIZE * (y_sum // y_count)
         return (x_center, y_center)
+
+
+    def get_frame_foreground(self) -> List[List[List[int]]]:
+        x_blocks = self.width // MACRO_SIZE
+        y_blocks = self.height // MACRO_SIZE
+        blocks = np.array(self.blocks)
+        for block in blocks:
+            if block.type == 0:
+                block.data = np.zeros((MACRO_SIZE, MACRO_SIZE))
+        blocks = blocks.reshape(y_blocks, x_blocks)
+        frame_data = []
+        for block_row in blocks:
+            # print([np.array(x.data).shape for x in block_row])
+            block_row = [x.data for x in block_row]
+            block_row = np.concatenate(block_row, axis = 1)
+            frame_data.extend(block_row)
+        frame_data = np.array(frame_data)
+        return frame_data
+
+    def frame_convert_to_hsv(self, frame_data: List[List[List[int]]]) -> None:
+        for x in range(len(frame_data)):
+            for y in range(len(frame_data[0])):
+                r, g, b = frame_data[x][y]
+                r, g, b = rgb_normalized(r, g, b)
+                frame_data[x][y] = hsv_denormalized(rgb_to_hsv(r, g, b))
+        return frame_data
 
 def test_read_into_blocks():
     width = 496
