@@ -93,7 +93,6 @@ class Frame:
             if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
                 abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
             ):
-                print('here1')
                 self.blocks[i].type=1
 
     def get_frame_data(self) -> List[List[List[int]]]:
@@ -103,7 +102,6 @@ class Frame:
         blocks = np.array(self.blocks).reshape(y_blocks, x_blocks)
         frame_data = []
         for block_row in blocks:
-            # print([np.array(x.data).shape for x in block_row])
             block_row = [x.data for x in block_row]
             block_row = np.concatenate(block_row, axis = 1)
             frame_data.extend(block_row)
