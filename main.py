@@ -10,6 +10,7 @@ def main():
     # Read input into list of frames
     print("Reading video")
     input_frames: List[Frame] = read_video(input_video_path)
+    input_frames = input_frames[:10]
 
     print("Calculating motion vectors")
     # Calculate the first frame
@@ -19,7 +20,7 @@ def main():
     # input_frames[0].set_block_visibility()
 
     for i in range(len(input_frames) - 1):
-        print(f'Processing frame {i+i}/{len(input_frames)}')
+        print(f'Processing frame {i+1}/{len(input_frames)}')
         previous_frame_data = input_frames[i].get_frame_data()
         input_frames[i+1].calculate_block_motion_vector(previous_frame_data)
         # Attempt getting motion vector with average

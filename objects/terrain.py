@@ -16,6 +16,8 @@ class Terrain:
         # List of frame offsets [x_offset, y_offset]
         self.frame_offsets: List[List[int]] = []
         self.mode: int = mode
+        self.y_offset = 0
+        self.x_offset = 0
     
     def get_frame_position_bounds_(self):
         """Returns min/max x/y for frame position"""
@@ -32,6 +34,7 @@ class Terrain:
         min_x, max_x, min_y, max_y = self.get_frame_position_bounds_()
         # Add offset from (0,0) in the terrain pixels
         x_offset, y_offset = abs(min_x), abs(min_y)
+        self.x_offset, self.y_offset = x_offset, y_offset
         x_length, y_length = max_x - min_x, max_y - min_y
         self.pixels = np.zeros((y_length, x_length, 3))
         self.pixels.fill(-1)
@@ -52,6 +55,18 @@ class Terrain:
                     # Temporarily setting this right now
                     self.pixels[y_start: y_end, x_start: x_end] = block.data
                     # Please set self.frame_offsets[i] as [x_offset, y_offset]
+
+
+    def paste_foreground_frames(self, frames: List[Frame]):
+        for frame in frames:
+            for block in frame.blocks:
+                # Must be foreground
+                if block.type != 1: continue
+                y_start = frame.position[1] + block.position[1] + self.y_offset
+                x_start = frame.position[0] + block.position[0] + self.x_offset
+                x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
+                self.pixels[y_start: y_end, x_start: x_end] = block.data
+
 
     def get_terrain(self) -> List[List[List[int]]]:
         """Return entire terrain"""
