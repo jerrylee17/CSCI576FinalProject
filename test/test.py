@@ -14,7 +14,7 @@ def test_by_video_frame():
     width = 490
     height = 270
     frame1 = read_rgb_image_("../videos/SAL_490_270_437/SAL_490_270_437.001.rgb", 1, width, height)
-    frame2 = read_rgb_image_("../videos/SAL_490_270_437/SAL_490_270_437.030.rgb", 2, width, height)
+    frame2 = read_rgb_image_("../videos/SAL_490_270_437/SAL_490_270_437.005.rgb", 2, width, height)
     display_frame(frame1)
     display_frame(frame2)
     tmp = frame1.get_frame_data()
@@ -24,7 +24,7 @@ def test_by_video_frame():
     end = time.time()
     print("Motion Vector Computation Time:"+ str(end - start))
     #/np.linalg.norm(block.vector)
-    V =  np.array([block.vector for block in frame2.blocks])
+    V =  np.array([block.vector/np.linalg.norm(block.vector)  for block in frame2.blocks])
     vX = V[:, 0]
     vY = V[:, 1]
 
@@ -55,7 +55,7 @@ def test_by_reference_frame():
     print("Motion Vector Computation Time:"+str(end - start))
     V =  np.array([block.vector/np.linalg.norm(block.vector) for block in frame2.blocks])
     vX = V[:, 0]
-    vY = V[:, 1]
+    vY = -V[:, 1]
 
     posX =  np.array([block.position[0] for block in frame2.blocks])
     posY =  np.array([block.position[1] for block in frame2.blocks])
@@ -76,12 +76,30 @@ def test_by_block():
 
     frame1 = Frame(1, width, height)
     frame2 = Frame(2, width, height)
-    frame1.read_into_blocks(set_block_in_frame(width, height, 2, 3,(255,233,0)))
-    frame2.read_into_blocks(set_block_in_frame(width, height, 0, 16,(255,233,0)))
+    frame1.read_into_blocks(set_block_in_frame(create_empty_frame(width, height), 16, 16,(255,233,0)))
+    frame2.read_into_blocks(set_block_in_frame(create_empty_frame(width, height), 0, 0,(255,233,0)))
+    display_frame(frame1)
+    display_frame(frame2)
+    tmp = frame1.get_frame_data()
     frame2.calculate_block_motion_vector(frame1.get_frame_data())
+    V =  np.array([block.vector/np.linalg.norm(block.vector) for block in frame2.blocks])
+    vX = V[:, 0]
+    vY = -V[:, 1]
+
+    posX =  np.array([block.position[0] for block in frame2.blocks])
+    posY =  np.array([block.position[1] for block in frame2.blocks])
+    origin1 = np.array([posX, posY])
+    x_ticks = np.arange(0, width, 16)
+    y_ticks = np.arange(0, height, 16)
+    plt.xticks(x_ticks)
+    plt.yticks(y_ticks)
+    plt.gca().invert_yaxis()
+    plt.quiver(*origin1, vX, vY)
+
+    plt.show()
 
 def create_empty_frame(w,h):
-    rgbArray = np.zeros((w, h, 3), 'uint8')
+    rgbArray = np.zeros((h, w, 3), 'uint8')
     # rgbArray[..., 0] =  np.random.randint(low = 0, high=255, size=(100,100))
     # rgbArray[..., 1] = np.random.randint(low = 0, high=255, size=(100,100))
     # rgbArray[..., 2] = np.random.randint(low = 0, high=255, size=(100,100))
@@ -91,14 +109,12 @@ def create_empty_frame(w,h):
 
     return rgbArray
 
-def set_block_in_frame(w,h,x,y,color):
+def set_block_in_frame(frame,x,y,color):
     block_size = 16
-    copy1 = copy.deepcopy(create_empty_frame(w,h))
-    copy1[x:x + block_size, y:y + block_size] = color
 
-    img = Image.fromarray(copy1)
-    plt.imshow(img)
-    return copy1
+    frame[x:x + block_size, y:y + block_size] = color
+
+    return frame
 
 if __name__ == '__main__':
 

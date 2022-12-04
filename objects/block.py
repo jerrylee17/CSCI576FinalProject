@@ -29,8 +29,8 @@ class Block:
     """Calculates motion vector based on MAD"""
     self.convert_to_hsv()
     min_MAD: float = sys.float_info.max
-    for i in range(self.position[0] - MACRO_SIZE, self.position[0] + MACRO_SIZE, 1):
-      for j in range(self.position[1] - MACRO_SIZE, self.position[1] + MACRO_SIZE, 1):
+    for i in range(self.position[0] - MACRO_SIZE, self.position[0] + MACRO_SIZE + 1, 1):
+      for j in range(self.position[1] - MACRO_SIZE, self.position[1] + MACRO_SIZE + 1, 1):
         if self.isValid(i, j, previous_frame_data):
           previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE,[0]]
           dx = i - self.position[0]
@@ -43,13 +43,9 @@ class Block:
             self.vector = (dx, dy)
           else:
             continue
-    print(self.vector)
+    #print(self.vector)
 
   def calculate_block_MAD(self, previous_frame_block: list[list[list[int]]]) -> int:
-    tmp = self.HSV_data[:, :, 0]
-    diff = tmp - previous_frame_block[:, :, 0]
-    abs_diff = np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0])
-
     return np.mean(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
 
   def isValid(self, x: int, y: int, previous_frame_data: list[list[list[int, int, int]]]) -> bool:
