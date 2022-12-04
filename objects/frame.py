@@ -1,5 +1,5 @@
 from objects.block import Block,rgb_normalized,hsv_denormalized
-from objects.constants import MACRO_SIZE, THREHOLDX, THREHOLDY
+from objects.constants import MACRO_SIZE, THRESHOLDX, THRESHOLDY
 from random import randint
 import numpy as np
 from typing import List, Tuple
@@ -82,9 +82,10 @@ class Frame:
     def set_block_visibility(self) -> None:
         """Set blocks to foreground or background"""
         numBlocks=len(self.blocks)
-        threhold=[THREHOLDX,THREHOLDY]
         for i in range(numBlocks):
-            if self.blocks[i].vector[0]>threhold[0] and self.blocks[i].vector[1]>threhold[1]:
+            if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
+                abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
+            ):
                 self.blocks[i].type=1
             else:
                 self.blocks[i].type=0
@@ -119,7 +120,6 @@ class Frame:
         x_center = MACRO_SIZE * (x_sum // x_count)
         y_center = MACRO_SIZE * (y_sum // y_count)
         return (x_center, y_center)
-
 
     def get_frame_foreground(self) -> List[List[List[int]]]:
         x_blocks = self.width // MACRO_SIZE
