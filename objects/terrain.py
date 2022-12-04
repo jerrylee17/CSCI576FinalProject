@@ -76,3 +76,22 @@ class Terrain:
                 x_start = frame.position[0] + block.position[0] + self.x_offset
                 x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
                 self.pixels[y_start: y_end, x_start: x_end] = block.data
+    
+    def get_frames_around_foreground(self) -> List[List[List[List[int]]]]:
+        frames = []
+        for frame in self.frames:
+            x_center, y_center = frame.get_frame_foreground_center()
+            x_start = self.x_offset + frame.position[0] + (x_center - frame.width) // 2
+            y_start = self.y_offset + frame.position[1] + (y_center - frame.height) // 2
+            x_end, y_end = x_start + frame.width, y_start + frame.height
+            # Currently has background
+            new_frame = self.pixels[y_start: y_end, x_start: x_end]
+            for block in frame.blocks:
+                # Must be foreground
+                if block.type != 1: continue
+                block_x_start = block.position[0] + (x_center - frame.width) // 2
+                block_y_start = block.position[1] + (y_center - frame.height) // 2
+                block_x_end, block_y_end = block_x_start + MACRO_SIZE, block_y_start + MACRO_SIZE
+                new_frame[block_y_start: block_y_end, block_x_start: block_x_end] = block.data
+            frames.append(new_frame)
+        return frames

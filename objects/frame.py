@@ -95,6 +95,23 @@ class Frame:
         frame_data = np.array(frame_data)
         return frame_data
 
+    def get_frame_foreground_center(self)-> List[Tuple[int, int]]:
+        """Calculate center position of frame"""
+        x_blocks = self.width // MACRO_SIZE
+        y_blocks = self.height // MACRO_SIZE
+        blocks = np.array(self.blocks).reshape(y_blocks, x_blocks)
+        x_count, x_sum, y_count, y_sum = 0
+        for y, column in enumerate(blocks):
+            for x, cell in enumerate(column):
+                if cell.type == 0: continue
+                x_count += 1
+                y_count += 1
+                x_sum += y
+                x_sum += x
+        x_center = MACRO_SIZE * (x_sum // x_count)
+        y_center = MACRO_SIZE * (y_sum // y_count)
+        return (x_center, y_center)
+
 def test_read_into_blocks():
     width = 496
     height = 272
