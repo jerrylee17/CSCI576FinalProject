@@ -113,6 +113,30 @@ def read_video(file_path: str) -> List[Frame]:
     return frames
 
 
+def display_video_foreground(frames: List[Frame]):
+    """Generate resultant video, and play it by calling play_video."""
+    video_dims = (frames[0].width - frames[0].pad_y, frames[0].height - frames[0].pad_x)
+    fourcc = cv2.VideoWriter_fourcc(*'avc1')
+    video = cv2.VideoWriter("test.mp4", fourcc, FPS, video_dims)
+    img = Image.new('RGB', video_dims, color='darkred')
+    for i in range(len(frames)):
+        frame = frames[i].get_frame_foreground()
+        for col in range(frames[0].width - frames[0].pad_y):
+            for row in range(frames[0].height - frames[0].pad_x):
+                img.putpixel(
+                    (col, row), 
+                    (int(frame[row][col][0]),
+                        int(frame[row][col][1]),
+                        int(frame[row][col][2])))
+
+        frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        video.write(frame_cvt)
+
+    video.release()
+    # Display video after generation
+    play_video_(FPS)
+
+
 def display_video(frames: List[Frame]):
     """Generate resultant video, and play it by calling play_video."""
     video_dims = (frames[0].width - frames[0].pad_y, frames[0].height - frames[0].pad_x)

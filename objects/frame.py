@@ -4,6 +4,7 @@ from random import randint
 import numpy as np
 from typing import List, Tuple
 from colorsys import rgb_to_hsv, hsv_to_rgb
+from copy import deepcopy
 # Holds a single frame
 class Frame:
     def __init__(self, index, width, height) -> None:
@@ -92,9 +93,8 @@ class Frame:
             if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
                 abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
             ):
+                print('here1')
                 self.blocks[i].type=1
-            else:
-                self.blocks[i].type=0
 
     def get_frame_data(self) -> List[List[List[int]]]:
         """Retrieve all values in frame"""
@@ -130,14 +130,14 @@ class Frame:
     def get_frame_foreground(self) -> List[List[List[int]]]:
         x_blocks = self.width // MACRO_SIZE
         y_blocks = self.height // MACRO_SIZE
-        blocks = np.array(self.blocks)
+        blocks = deepcopy(self.blocks)
         for block in blocks:
             if block.type == 0:
-                block.data = np.zeros((MACRO_SIZE, MACRO_SIZE))
+                block.data = np.zeros((MACRO_SIZE, MACRO_SIZE, 3))
+        blocks = np.array(blocks)
         blocks = blocks.reshape(y_blocks, x_blocks)
         frame_data = []
         for block_row in blocks:
-            # print([np.array(x.data).shape for x in block_row])
             block_row = [x.data for x in block_row]
             block_row = np.concatenate(block_row, axis = 1)
             frame_data.extend(block_row)

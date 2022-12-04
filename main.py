@@ -1,5 +1,5 @@
 import sys
-from util.io import read_video, display_video, display_frame
+from util.io import read_video, display_video, display_frame, display_video_foreground
 from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
@@ -9,7 +9,7 @@ def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
     print("Reading video")
-    input_frames: List[Frame] = read_video(input_video_path)[:100]
+    input_frames: List[Frame] = read_video(input_video_path)[:2]
 
     print("Calculating motion vectors")
     # Calculate the first frame
@@ -40,7 +40,8 @@ def main():
     background_frame.read_into_blocks(background_pixels)
     display_frame(input_frames[0])
     display_frame(background_frame)
-    display_video(foreground)
+    print("Displaying foreground")
+    display_video_foreground(foreground)
 
     # background, foreground = get_foreground_and_background(input_frames)
 
