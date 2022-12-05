@@ -177,11 +177,11 @@ def display_video(frames: List[Frame]):
     play_video_(FPS)
 
 
-def read_jpg_image(file_name: str) -> Frame:
-    image = Image.open(file_name)
-    frame = Frame(0, image.size[0], image.size[1])
-    frame.read_into_blocks(image)
-    return frame
+# def read_jpg_image(file_name: str) -> Frame:
+#     image = Image.open(file_name)
+#     frame = Frame(0, image.size[0], image.size[1])
+#     frame.read_into_blocks(image)
+#     return frame
 
 # if __name__ == '__main__':
 #

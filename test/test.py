@@ -122,7 +122,9 @@ def read_jpg():
     height = 540
     frame1 = read_jpg_image("../videos/test/reference.jpg",1,width, height)
     display_frame(frame1)
+
+
 if __name__ == '__main__':
-    f1 = "../videos/imageonline-co-pixelated.png"
-    f2 = "../videos/imageonline-co-pixelated2.png"
+    f1 = "../videos/test/imageonline-co-pixelated.png"
+    f2 = "../videos/test/imageonline-co-pixelated2.png"
     test_by_reference_frame(512,512,f1,f2)
