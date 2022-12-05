@@ -48,6 +48,23 @@ def read_rgb_image_(file_name: str, index, width: int, height: int) -> Frame:
         frame.read_into_blocks(image)
         return frame
 
+def read_jpg_image(file_name: str, index, width: int, height: int) -> Frame:
+    img = Image.open(file_name)
+    image = []
+    idx = 0
+    for col in range(height):
+        col_list = []
+        for row in range(width):
+            # Separate R, G, and B values
+            rgb_list = img.getpixel((row,col))[0:3]
+            col_list.append(rgb_list)
+            idx += 1
+
+        image.append(col_list)
+    image = np.array(image)
+    frame = Frame(index, width, height)
+    frame.read_into_blocks(image)
+    return frame
 
 def play_video_(fps: int):
     """Play the generated video."""
@@ -160,11 +177,11 @@ def display_video(frames: List[Frame]):
     play_video_(FPS)
 
 
-def read_jpg_image(file_name: str) -> Frame:
-    image = Image.open(file_name)
-    frame = Frame(0, image.size[0], image.size[1])
-    frame.read_into_blocks(image)
-    return frame
+# def read_jpg_image(file_name: str) -> Frame:
+#     image = Image.open(file_name)
+#     frame = Frame(0, image.size[0], image.size[1])
+#     frame.read_into_blocks(image)
+#     return frame
 
 # if __name__ == '__main__':
 #

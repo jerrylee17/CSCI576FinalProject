@@ -32,10 +32,11 @@ class Block:
     for i in range(self.position[0] - MACRO_SIZE, self.position[0] + MACRO_SIZE + 1, 1):
       for j in range(self.position[1] - MACRO_SIZE, self.position[1] + MACRO_SIZE + 1, 1):
         if self.isValid(i, j, previous_frame_data):
-          previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE,[0]]
+          previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE, [0, 1, 2]]
           dx = i - self.position[0]
           dy = j - self.position[1]
-          MAD: float = self.calculate_block_MAD(previous_frame_block)
+          MAD: float = self.calculate_block_MAD(previous_frame_block, i, j)
+
           if MAD < min_MAD:
             min_MAD = MAD
             self.vector = (dx, dy)
@@ -43,12 +44,55 @@ class Block:
             self.vector = (dx, dy)
           else:
             continue
-    #print(self.vector)
+    print(self.vector)
+    print(min_MAD)
 
-  def calculate_block_MAD(self, previous_frame_block: list[list[list[int]]]) -> int:
-    return np.mean(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
+  def calculate_motion_vector_1(self, previous_frame_data: List[List[List[int]]]) -> None:
+    """Calculates motion vector based on MAD"""
+    min_MAD: float = sys.float_info.max
+    for i in range(self.position[0] - MACRO_SIZE, self.position[0] + MACRO_SIZE + 1, 1):
+      for j in range(self.position[1] - MACRO_SIZE, self.position[1] + MACRO_SIZE + 1, 1):
+        if self.isValid(i, j, previous_frame_data):
+          previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE,:]
+          dx = i - self.position[0]
+          dy = j - self.position[1]
+          MAD: float = self.calculate_block_MAD_1(previous_frame_block)
+          if MAD < min_MAD:
+            min_MAD = MAD
+            self.vector = (dx, dy)
+          elif MAD == min_MAD and (abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)):
+            self.vector = (dx, dy)
+          else:
+            continue
+    print(self.vector)
 
-  def isValid(self, x: int, y: int, previous_frame_data: list[list[list[int, int, int]]]) -> bool:
+  def calculate_block_MAD(self, previous_frame_block: List[List[List[int]]], i, j) -> float:
+    # print(self.HSV_data[:, :, 1])
+    # res = np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
+
+    print(len(self.HSV_data[0][0]), len(previous_frame_block[0][0]))
+    #
+    res = np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
+    # print("debug 1:" + str(res))
+    res += np.sum(np.abs(self.HSV_data[:, :, 1] - previous_frame_block[:, :, 1]))
+    # print("debug 2:" + str(res))
+    res += np.sum(np.abs(self.HSV_data[:, :, 2] - previous_frame_block[:, :, 2]))
+    # print("debug 3:" + str(res))
+
+    # if res == 0 and i != 0 and j != 0:
+    #   print("\n===============debug start===============\n")
+    #   print(self.HSV_data[:, :, 0])
+    #   print(previous_frame_block[:, :, 0])
+    #   print("\n===============debug end===============\n")
+
+    return res
+
+  def calculate_block_MAD_1(self, previous_frame_block: List[List[List[int]]]) -> float:
+    tmp = np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
+    return np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
+
+
+  def isValid(self, x: int, y: int, previous_frame_data: List[List[List[int]]]) -> bool:
     return 0 <= x <= len(previous_frame_data[0]) - MACRO_SIZE and 0 <= y <= len(
       previous_frame_data) - MACRO_SIZE
 
@@ -83,7 +127,10 @@ def hsv_normalized( h, s, v):
   return (h / h_max, s / s_max, v / v_max)
 
 def hsv_denormalized( ary):
-  return ((int) (ary[0] * h_max), (int) (ary[1] * s_max), (int) (ary[2] * v_max))
+  # print("Debug H: " + str(ary[0]) + " " + str(int(round(ary[0] * h_max))))
+  # print("Debug S: " + str(ary[1]) + " " + str(int(round(ary[1] * s_max))))
+  # print("Debug V: " + str(ary[2]) + " " + str(int(round(ary[2] * v_max))))
+  return (int(round(ary[0] * h_max)), int(round(ary[1] * s_max)), int(round(ary[2] * v_max)))
 
 def rgb_normalized( r, g, b):
   return (r / 255., g / 255., b / 255.)
