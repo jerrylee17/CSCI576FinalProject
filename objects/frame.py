@@ -79,14 +79,10 @@ class Frame:
 
     def calculate_average_motion_vector(self) -> None:
         """Determine camera movement by average motion vector"""
-        #assume self.blocks is not empty
         numBlocks=len(self.blocks)
-        summ=[0,0]
-        for i in range(numBlocks):
-            tmpVector=self.blocks[i].vector
-            summ[0]+=tmpVector[0]
-            summ[1]+=tmpVector[1]
-        self.vector=(round(summ[0]/numBlocks),round(summ[1]/numBlocks))
+        sum_x = sum([block.vector[0] for block in self.blocks])
+        sum_y = sum([block.vector[1] for block in self.blocks])
+        self.vector=(round(sum_x/numBlocks),round(sum_y/numBlocks))
 
     def calculate_mode_motion_vector(self) -> None:
         """Determine camera movement by most occuring motion vector"""
@@ -97,8 +93,7 @@ class Frame:
 
     def set_block_visibility(self) -> None:
         """Set blocks to foreground or background"""
-        numBlocks=len(self.blocks)
-        for i in range(numBlocks):
+        for i in range(len(self.blocks)):
             if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
                 abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
             ):

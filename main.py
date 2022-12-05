@@ -4,6 +4,7 @@ from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
+from copy import deepcopy
 
 def main():
     input_video_path = sys.argv[1]
@@ -50,21 +51,26 @@ def main():
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
 
-    # video_no_objects = display_video_no_objects(background)
-    # video_around_foreground = display_video_around_foreground(background)
-    # composite_trial = composite_trial(background, foreground)
+    # video_no_objects = get_display_video_no_objects(background)
+    # video_around_foreground = get_display_video_around_foreground(background)
+    # print("Displaying composite trail")
+    # composite_trail = get_composite_trail(background, foreground)
+    # composite_trail_pixels = composite_trail.get_terrain()
+    # composite_trail_frame = Frame(-1, len(composite_trail_pixels[0]), len(composite_trail_pixels))
+    # composite_trail_frame.read_into_blocks(composite_trail_pixels)
+    # display_frame(composite_trail_frame)
 
 
-# Do this last
-def composite_trial(background: Terrain, frames: List[Frame]):
-    background.paste_foreground_frames(frames[::50])
-    return background
+def get_composite_trail(background: Terrain, frames: List[Frame]):
+    trail = deepcopy(background)
+    trail.paste_foreground_frames(frames[::10])
+    return trail
 
-def display_video_around_foreground(background: Terrain):
+def get_display_video_around_foreground(background: Terrain):
     """Display video around foreground"""
     return background.get_frames_around_foreground()
 
-def display_video_no_objects(background: Terrain):
+def get_display_video_no_objects(background: Terrain):
     """Display video with objects removed"""
     return background.get_background_frame_positions()
 

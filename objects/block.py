@@ -40,7 +40,9 @@ class Block:
           if MAD < min_MAD:
             min_MAD = MAD
             self.vector = (dx, dy)
-          elif MAD == min_MAD and (abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)):
+          elif MAD == min_MAD and (
+            abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)
+          ):
             self.vector = (dx, dy)
           else:
             continue
@@ -91,7 +93,6 @@ class Block:
         r, g, b = rgb_normalized(r, g, b)
         self.HSV_data[x][y] = hsv_denormalized(rgb_to_hsv(r, g, b))
     self.data_type = "hsv"
-
 
 
   def convert_to_rgb(self) -> None:
