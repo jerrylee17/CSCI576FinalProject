@@ -9,7 +9,7 @@ def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
     print("Reading video")
-    input_frames: List[Frame] = read_video(input_video_path)[:2]
+    input_frames: List[Frame] = read_video(input_video_path)
 
     print("Calculating motion vectors")
     # Calculate the first frame

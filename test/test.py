@@ -1,4 +1,4 @@
-from util.io import read_video, display_video,read_rgb_image_,display_frame
+from util.io import read_video, display_video,read_rgb_image_,display_frame,read_jpg_image
 import numpy as np
 from objects.frame import Frame
 from PIL import Image
@@ -41,11 +41,10 @@ def test_by_video_frame():
     plt.quiver(*origin1, vX, vY)
     plt.show()
 
-def test_by_reference_frame():
-    width = 960
-    height = 540
-    frame1 = read_rgb_image_("../videos/test/reference_11dx_15dy.rgb", 1, width, height)
-    frame2 = read_rgb_image_("../videos/test/reference.rgb", 2, width, height)
+def test_by_reference_frame(width,height,f1,f2):
+
+    frame1 = read_jpg_image(f1, 1, width, height)
+    frame2 = read_jpg_image(f2, 2, width, height)
     display_frame(frame1)
     display_frame(frame2)
     tmp = frame1.get_frame_data()
@@ -53,7 +52,7 @@ def test_by_reference_frame():
     frame2.calculate_block_motion_vector(frame1.get_frame_data())
     end = time.time()
     print("Motion Vector Computation Time:"+str(end - start))
-    V =  np.array([block.vector/np.linalg.norm(block.vector) for block in frame2.blocks])
+    V =  np.array([block.vector for block in frame2.blocks])
     vX = V[:, 0]
     vY = -V[:, 1]
 
@@ -69,6 +68,8 @@ def test_by_reference_frame():
 
     plt.quiver(*origin1, vX, vY)
     plt.show()
+    frame2.calculate_mode_motion_vector()
+    print("Frame vector: "+ str(frame2.vector))
 
 def test_by_block():
     width = 320
@@ -110,12 +111,18 @@ def create_empty_frame(w,h):
     return rgbArray
 
 def set_block_in_frame(frame,x,y,color):
-    block_size = 16
+    block_size = 20
 
     frame[x:x + block_size, y:y + block_size] = color
 
     return frame
 
+def read_jpg():
+    width = 960
+    height = 540
+    frame1 = read_jpg_image("../videos/test/reference.jpg",1,width, height)
+    display_frame(frame1)
 if __name__ == '__main__':
-
-    test_by_video_frame()
+    f1 = "../videos/imageonline-co-pixelated.png"
+    f2 = "../videos/imageonline-co-pixelated2.png"
+    test_by_reference_frame(512,512,f1,f2)

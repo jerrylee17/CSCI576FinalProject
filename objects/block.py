@@ -36,6 +36,7 @@ class Block:
           dx = i - self.position[0]
           dy = j - self.position[1]
           MAD: float = self.calculate_block_MAD(previous_frame_block)
+
           if MAD < min_MAD:
             min_MAD = MAD
             self.vector = (dx, dy)
@@ -43,10 +44,35 @@ class Block:
             self.vector = (dx, dy)
           else:
             continue
-    #print(self.vector)
+    print(self.vector)
+    print(min_MAD)
 
-  def calculate_block_MAD(self, previous_frame_block: list[list[list[int]]]) -> int:
-    return np.mean(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
+  def calculate_motion_vector_1(self, previous_frame_data: List[List[List[int]]]) -> None:
+    """Calculates motion vector based on MAD"""
+    min_MAD: float = sys.float_info.max
+    for i in range(self.position[0] - MACRO_SIZE, self.position[0] + MACRO_SIZE + 1, 1):
+      for j in range(self.position[1] - MACRO_SIZE, self.position[1] + MACRO_SIZE + 1, 1):
+        if self.isValid(i, j, previous_frame_data):
+          previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE,:]
+          dx = i - self.position[0]
+          dy = j - self.position[1]
+          MAD: float = self.calculate_block_MAD_1(previous_frame_block)
+          if MAD < min_MAD:
+            min_MAD = MAD
+            self.vector = (dx, dy)
+          elif MAD == min_MAD and (abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)):
+            self.vector = (dx, dy)
+          else:
+            continue
+    print(self.vector)
+
+  def calculate_block_MAD(self, previous_frame_block: List[List[List[int]]]) -> float:
+    return np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
+
+  def calculate_block_MAD_1(self, previous_frame_block: List[List[List[int]]]) -> float:
+    tmp = np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
+    return np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
+
 
   def isValid(self, x: int, y: int, previous_frame_data: list[list[list[int, int, int]]]) -> bool:
     return 0 <= x <= len(previous_frame_data[0]) - MACRO_SIZE and 0 <= y <= len(
