@@ -98,11 +98,45 @@ class Frame:
     def set_block_visibility(self) -> None:
         """Set blocks to foreground or background"""
         numBlocks=len(self.blocks)
+        block_width = self.width / MACRO_SIZE
         for i in range(numBlocks):
+            if i < block_width or i >= numBlocks - block_width:
+                continue
+            if i % block_width == 0 or i % block_width == block_width - 1:
+                continue
             if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
                 abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
             ):
-                self.blocks[i].type=1
+                self.blocks[i].type = 1
+
+    def remove_individual_foreground_block(self) -> None:
+        """
+        If a block is set to foreground but not adjacent to any other
+        foreground block, set it back to background
+        """
+        num_blocks = len(self.blocks)
+        block_width = self.width / MACRO_SIZE
+        offsets = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+
+        for i in range(num_blocks):
+            if self.blocks[i].type != 1: continue
+
+            is_individual = True
+
+            x = int(i % block_width)
+            y = int(i / block_width)
+            for offset in offsets:
+                nx = x + offset[0]
+                ny = y + offset[1]
+                nidx = int(nx + ny * block_width)
+                if 0 <= nidx < num_blocks:
+                    if self.blocks[nidx].type == 1:
+                        is_individual = False
+                        break
+
+            if (is_individual): self.blocks[i].type = 0
+
+
 
     def get_frame_data(self) -> List[List[List[int]]]:
         """Retrieve all values in frame"""

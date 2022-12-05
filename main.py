@@ -27,6 +27,7 @@ def main():
         # Attempt getting motion vector with average
         input_frames[i+1].calculate_average_motion_vector()
         input_frames[i+1].set_block_visibility()
+        input_frames[i+1].remove_individual_foreground_block()
         input_frames[i+1].calculate_frame_position(input_frames[i])
 
     # Intermediate step: Separate into background and foreground
