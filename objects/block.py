@@ -66,10 +66,10 @@ class Block:
             continue
     print(self.vector)
 
-  def calculate_block_MAD(self, previous_frame_block: list[list[list[int]]]) -> float:
+  def calculate_block_MAD(self, previous_frame_block: List[List[List[int]]]) -> float:
     return np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
 
-  def calculate_block_MAD_1(self, previous_frame_block: list[list[list[int]]]) -> float:
+  def calculate_block_MAD_1(self, previous_frame_block: List[List[List[int]]]) -> float:
     tmp = np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
     return np.sum(np.abs(self.data[:, :, :] - previous_frame_block[:, :, :]))
 
