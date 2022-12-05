@@ -93,12 +93,10 @@ class Frame:
 
     def set_block_visibility(self) -> None:
         """Set blocks to foreground or background"""
-        print(f'vector: {self.vector}')
         for i in range(len(self.blocks)):
             if (abs(self.blocks[i].vector[0] - self.vector[0]) > THRESHOLDX) or (
                 abs(self.blocks[i].vector[1] - self.vector[1]) > THRESHOLDY
             ):
-                print(self.blocks[i].vector)
                 self.blocks[i].type=1
 
     def get_frame_data(self) -> List[List[List[int]]]:

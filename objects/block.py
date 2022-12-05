@@ -40,7 +40,9 @@ class Block:
           if MAD < min_MAD:
             min_MAD = MAD
             self.vector = (dx, dy)
-          elif MAD == min_MAD and (abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)):
+          elif MAD == min_MAD and (
+            abs(self.vector[0]) + abs(self.vector[1]) > abs(dx) + abs(dy)
+          ):
             self.vector = (dx, dy)
           else:
             continue
