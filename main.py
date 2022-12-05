@@ -4,6 +4,7 @@ from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
+from copy import deepcopy
 
 def main():
     input_video_path = sys.argv[1]
@@ -49,22 +50,44 @@ def main():
     # 1. Display motion trails
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
+    
+    print("Displaying composite trail")
+    composite_trail = get_composite_trail(background, foreground)
+    display_frame_from_pixels(composite_trail)
 
-    # video_no_objects = display_video_no_objects(background)
-    # video_around_foreground = display_video_around_foreground(background)
-    # composite_trial = composite_trial(background, foreground)
+    print("Displaying video no objects")
+    video_no_objects = get_display_video_no_objects(background)
+    display_video_from_pixels(video_no_objects)
+
+    print("Displaying video around foreground")
+    video_around_foreground = get_display_video_around_foreground(background)
+    display_video_from_pixels(video_around_foreground)
 
 
-# Do this last
-def composite_trial(background: Terrain, frames: List[Frame]):
-    background.paste_foreground_frames(frames[::50])
-    return background
+def display_frame_from_pixels(pixels: List[List[List[int]]]):
+    frame = Frame(-1, len(pixels[0]), len(pixels))
+    frame.read_into_blocks(pixels)
+    display_frame(frame)
 
-def display_video_around_foreground(background: Terrain):
+def display_video_from_pixels(pixels: List[List[List[List[int]]]]):
+    frames = []
+    for i, frame_pixels in enumerate(pixels):
+        frame = Frame(i, len(frame_pixels[0]), len(frame_pixels))
+        frame.read_into_blocks(frame)
+        frames.append(frame)
+    display_video(frames)
+
+def get_composite_trail(background: Terrain, frames: List[Frame]):
+    trail = deepcopy(background)
+    trail.paste_foreground_frames(frames[::10])
+    trail_pixels = trail.get_terrain()
+    return trail_pixels
+
+def get_display_video_around_foreground(background: Terrain) -> List[List[List[List[int]]]]:
     """Display video around foreground"""
     return background.get_frames_around_foreground()
 
-def display_video_no_objects(background: Terrain):
+def get_display_video_no_objects(background: Terrain) -> List[List[List[List[int]]]]:
     """Display video with objects removed"""
     return background.get_background_frame_positions()
 
