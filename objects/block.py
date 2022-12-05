@@ -35,7 +35,7 @@ class Block:
           previous_frame_block = previous_frame_data[j:j + MACRO_SIZE, i:i + MACRO_SIZE, [0, 1, 2]]
           dx = i - self.position[0]
           dy = j - self.position[1]
-          MAD: float = self.calculate_block_MAD(previous_frame_block, i, j)
+          MAD: float = self.calculate_block_MAD(previous_frame_block)
 
           if MAD < min_MAD:
             min_MAD = MAD
@@ -66,25 +66,10 @@ class Block:
             continue
     print(self.vector)
 
-  def calculate_block_MAD(self, previous_frame_block: List[List[List[int]]], i, j) -> float:
-    # print(self.HSV_data[:, :, 1])
-    # res = np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
-
-    print(len(self.HSV_data[0][0]), len(previous_frame_block[0][0]))
-    #
+  def calculate_block_MAD(self, previous_frame_block: List[List[List[int]]]) -> float:
     res = np.sum(np.abs(self.HSV_data[:, :, 0] - previous_frame_block[:, :, 0]))
-    # print("debug 1:" + str(res))
     res += np.sum(np.abs(self.HSV_data[:, :, 1] - previous_frame_block[:, :, 1]))
-    # print("debug 2:" + str(res))
     res += np.sum(np.abs(self.HSV_data[:, :, 2] - previous_frame_block[:, :, 2]))
-    # print("debug 3:" + str(res))
-
-    # if res == 0 and i != 0 and j != 0:
-    #   print("\n===============debug start===============\n")
-    #   print(self.HSV_data[:, :, 0])
-    #   print(previous_frame_block[:, :, 0])
-    #   print("\n===============debug end===============\n")
-
     return res
 
   def calculate_block_MAD_1(self, previous_frame_block: List[List[List[int]]]) -> float:
