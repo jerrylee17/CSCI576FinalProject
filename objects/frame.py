@@ -39,7 +39,16 @@ class Frame:
     def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
         self.frame_convert_to_hsv(previous_frame_data)
         for i in range(len(self.blocks)):
+            if i == 22:
+                print("---")
+            print("Block "+ str(i) +":")
             self.blocks[i].calculate_motion_vector(previous_frame_data)
+            if not self.blocks[i].vector:
+                print(i)
+
+    def calculate_block_motion_vector_1(self, previous_frame_data: List[List[List[int]]]) -> None:
+        for i in range(len(self.blocks)):
+            self.blocks[i].calculate_motion_vector_1(previous_frame_data)
             if not self.blocks[i].vector:
                 print(i)
 
@@ -150,7 +159,7 @@ class Frame:
                 r, g, b = frame_data[x][y]
                 r, g, b = rgb_normalized(r, g, b)
                 frame_data[x][y] = hsv_denormalized(rgb_to_hsv(r, g, b))
-        return frame_data
+
 
 def test_read_into_blocks():
     width = 496
