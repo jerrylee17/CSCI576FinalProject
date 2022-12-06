@@ -24,7 +24,7 @@ def main():
     input_frames[0].position = (0, 0)
 
     for i in range(len(input_frames) - 1):
-        print(f'Processing frame {i+1}/{len(input_frames)}--------------------------------------------------')
+        print(f'Processing frame {i+1}/{len(input_frames)}')
         previous_frame_data = input_frames[i].get_frame_data()
         input_frames[i+1].calculate_block_motion_vector(previous_frame_data)
         # Attempt getting motion vector with average
