@@ -137,8 +137,8 @@ def human_detection():
     # # HD = Human_Detection()
     # # HD.get_human_postition(image)
     # #
-    dector = DetectorAPI()
-    dector.get_human_position(image)
+    detector = DetectorAPI()
+    detector.get_human_position(image)
 
 if __name__ == '__main__':
     # f1 = "../videos/test/imageonline-co-pixelated.png"

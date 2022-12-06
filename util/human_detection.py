@@ -37,6 +37,7 @@ class Human_Detection:
 class DetectorAPI:
   def __init__(self):
     tf.disable_v2_behavior()
+    self.threshold = 0.7
     self.path_to_ckpt = r"C:\Users\12237\Desktop\CSCI576\CSCI576FinalProject\util\faster_rcnn_inception_v2_coco_2018_01_28\frozen_inference_graph.pb"
     self.detection_graph = tf.Graph()
     with self.detection_graph.as_default():
@@ -87,15 +88,17 @@ class DetectorAPI:
     self.default_graph.close()
 
   def get_human_position(self,img):
+    human_boxs = []
     img = img.astype(np.uint8)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     boxes, scores, classes, num = self.processFrame(img)
-    threshold = 0.7
+
     for i in range(len(boxes)):
       # Class 1 represents human
-      if classes[i] == 1 and scores[i] > threshold:
-        box = boxes[i]
-        cv2.rectangle(img, (box[1], box[0]), (box[3], box[2]), (255, 0, 0), 2)
-
-    cv2.imshow("preview", img)
-    cv2.waitKey(0)
+      if classes[i] == 1 and scores[i] > self.threshold:
+        human_boxs.append(boxes[i])
+        #box = boxes[i]
+        #cv2.rectangle(img, (box[1], box[0]), (box[3], box[2]), (255, 0, 0), 2)
+    # cv2.imshow("preview", img)
+    # cv2.waitKey(0)
+    return human_boxs

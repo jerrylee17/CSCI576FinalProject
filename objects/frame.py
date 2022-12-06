@@ -136,7 +136,19 @@ class Frame:
 
             if (is_individual): self.blocks[i].type = 0
 
+    def human_detection(self,detector,previous_frame_data) -> None:
+        human_boxs = detector.get_human_position(previous_frame_data)
+        if len(human_boxs) == 0:
+            return
+        for block in self.blocks:
+            if self.in_boxes(human_boxs,block.position) == False:
+                block.type = 0
 
+    def in_boxes(self,human_boxs,position):
+        for box in human_boxs:
+            if box[1]<=position[0]<= box[0] and box[3]<=position[1]<=box[2]:
+                return True
+        return False
 
     def get_frame_data(self) -> List[List[List[int]]]:
         """Retrieve all values in frame"""
