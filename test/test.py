@@ -5,7 +5,7 @@ from PIL import Image
 import copy
 import time
 import matplotlib.pyplot as plt
-
+from util.human_detection import Human_Detection,DetectorAPI
 def test_video():
     video = read_video("../videos/SAL_490_270_437")
     display_video(video)
@@ -123,8 +123,25 @@ def read_jpg():
     frame1 = read_jpg_image("../videos/test/reference.jpg",1,width, height)
     display_frame(frame1)
 
+def human_detection():
+
+    width = 240
+    height = 424
+
+    file = "../videos/video2_240_424_383/video2_240_424_383.001.rgb"
+    frame =  read_rgb_image_(file, 1, width, height)
+    display_frame(frame)
+
+    image = np.array(frame.get_frame_data())
+    # #HOGDescriptor
+    # # HD = Human_Detection()
+    # # HD.get_human_postition(image)
+    # #
+    dector = DetectorAPI()
+    dector.get_human_position(image)
 
 if __name__ == '__main__':
-    f1 = "../videos/test/imageonline-co-pixelated.png"
-    f2 = "../videos/test/imageonline-co-pixelated2.png"
-    test_by_reference_frame(512,512,f1,f2)
+    # f1 = "../videos/test/imageonline-co-pixelated.png"
+    # f2 = "../videos/test/imageonline-co-pixelated2.png"
+    # test_by_reference_frame(512,512,f1,f2)
+    human_detection()
