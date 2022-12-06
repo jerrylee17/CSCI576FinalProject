@@ -31,10 +31,11 @@ class Human_Detection:
     # return boxes
     cv2.waitKey(0)
 
-  # https: // medium.com / @ madhawavidanapathirana / real - time - human - detection - in -computer - vision - part - 2 - c7eda27115c6
 
-#https://medium.com/@madhawavidanapathirana/real-time-human-detection-in-computer-vision-part-2-c7eda27115c6
+
+
 class DetectorAPI:
+  # https://medium.com/@madhawavidanapathirana/real-time-human-detection-in-computer-vision-part-2-c7eda27115c6
   def __init__(self):
     tf.disable_v2_behavior()
     self.threshold = 0.7
@@ -61,18 +62,15 @@ class DetectorAPI:
     self.num_detections = self.detection_graph.get_tensor_by_name('num_detections:0')
 
   def processFrame(self, image):
-
     # Expand dimensions since the trained_model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(image, axis=0)
     # Actual detection.
-    start_time = time.time()
+    #start_time = time.time()
     (boxes, scores, classes, num) = self.sess.run(
       [self.detection_boxes, self.detection_scores, self.detection_classes, self.num_detections],
       feed_dict={self.image_tensor: image_np_expanded})
-    end_time = time.time()
-
-    print("Elapsed Time:", end_time - start_time)
-
+    #end_time = time.time()
+    #print("Elapsed Time:", end_time - start_time)
     im_height, im_width, _ = image.shape
     boxes_list = [None for i in range(boxes.shape[1])]
     for i in range(boxes.shape[1]):
@@ -97,8 +95,8 @@ class DetectorAPI:
       # Class 1 represents human
       if classes[i] == 1 and scores[i] > self.threshold:
         human_boxs.append(boxes[i])
-        #box = boxes[i]
-        #cv2.rectangle(img, (box[1], box[0]), (box[3], box[2]), (255, 0, 0), 2)
+    #     box = boxes[i]
+    #     cv2.rectangle(img, (box[1], box[0]), (box[3], box[2]), (255, 0, 0), 1)
     # cv2.imshow("preview", img)
-    # cv2.waitKey(0)
+    # cv2.waitKey()
     return human_boxs

@@ -14,7 +14,7 @@ def main():
     input_frames: List[Frame] = read_video(input_video_path)
 
     print("Calculating motion vectors")
-    #detector = DetectorAPI()
+    detector = DetectorAPI()
 
     # Calculate the first frame
     # previous_frame_data = input_frames[1].get_frame_data()
@@ -31,7 +31,7 @@ def main():
         input_frames[i+1].calculate_average_motion_vector()
         input_frames[i+1].set_block_visibility()
         input_frames[i+1].remove_individual_foreground_block()
-        #input_frames[i + 1].human_detection(detector,previous_frame_data)
+        input_frames[i + 1].human_detection(detector)
         input_frames[i+1].calculate_frame_position(input_frames[i])
 
     # Intermediate step: Separate into background and foreground
@@ -67,7 +67,7 @@ def main():
     print("Displaying video around foreground")
     video_around_foreground = get_display_video_around_foreground(background)
     display_video_from_pixels(video_around_foreground)
-
+    detector.close()
 
 def display_frame_from_pixels(pixels: List[List[List[int]]]):
     frame = Frame(-1, len(pixels[0]), len(pixels))

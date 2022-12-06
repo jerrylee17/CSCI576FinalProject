@@ -140,8 +140,32 @@ def human_detection():
     detector = DetectorAPI()
     detector.get_human_position(image)
 
+def frame_block_detection():
+    detector = DetectorAPI()
+    width = 240
+    height = 424
+    f1 = "../videos/video3_240_424_193/video3_240_424_193.074.rgb"
+    f2 = "../videos/video3_240_424_193/video3_240_424_193.075.rgb"
+    #frame1 = read_rgb_image_(f1, 1, width, height)
+    frame2 = read_rgb_image_(f2, 2, width, height)
+    # display_frame(frame1)
+    # display_frame(frame2)
+    # frame2.calculate_block_motion_vector(frame1.get_frame_data())
+    # frame2.calculate_average_motion_vector()
+    # frame2.set_block_visibility()
+    frame2.human_detection(detector)
+    pixels = frame2.get_frame_foreground()
+    img = Image.new("RGB", (width, height))
+    for col in range(width):
+        for row in range(height):
+            img.putpixel((col, row), (
+                int(pixels[row][col][0]),
+                int(pixels[row][col][1]),
+                int(pixels[row][col][2])))
+    img.show()
+
 if __name__ == '__main__':
     # f1 = "../videos/test/imageonline-co-pixelated.png"
     # f2 = "../videos/test/imageonline-co-pixelated2.png"
     # test_by_reference_frame(512,512,f1,f2)
-    human_detection()
+    frame_block_detection()

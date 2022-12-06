@@ -123,7 +123,7 @@ def read_video(file_path: str) -> List[Frame]:
     file_names = listdir(file_path)
     file_names.sort()
     for index, file_name in enumerate(file_names):
-        if index <= 70: continue;  # Debug
+        if index <= 50: continue;  # Debug
         if index >= 100: break;  # Debug
         if file_name.endswith(".DS_Store"): continue
         image_name = f"{file_path}/{file_name}"
