@@ -192,7 +192,7 @@ class Frame:
     blocks = deepcopy(self.blocks)
     for block in blocks:
       if block.type == 0:
-        block.data = np.zeros((MACRO_SIZE, MACRO_SIZE, 3))
+        block.data = np.ones((MACRO_SIZE, MACRO_SIZE, 3)) * 255
     blocks = np.array(blocks)
     blocks = blocks.reshape(y_blocks, x_blocks)
     frame_data = []
