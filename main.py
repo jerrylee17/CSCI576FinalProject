@@ -1,6 +1,6 @@
 import sys
 from util.io import read_video, display_video, display_frame, display_video_foreground
-from util.human_detection import DetectorAPI
+# from util.human_detection import DetectorAPI
 from util.background import generate_background
 from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
@@ -14,7 +14,7 @@ def main():
     input_frames: List[Frame] = read_video(input_video_path)
 
     print("Calculating motion vectors")
-    detector = DetectorAPI()
+    # detector = DetectorAPI()
 
     # Calculate the first frame
     # previous_frame_data = input_frames[1].get_frame_data()
@@ -31,7 +31,7 @@ def main():
         input_frames[i+1].calculate_average_motion_vector()
         input_frames[i+1].set_block_visibility()
         input_frames[i+1].remove_individual_foreground_block()
-        input_frames[i + 1].human_detection(detector)
+        # input_frames[i + 1].human_detection(detector)
         input_frames[i+1].calculate_frame_position(input_frames[i])
 
     # Intermediate step: Separate into background and foreground
@@ -41,13 +41,15 @@ def main():
     foreground: List[Frame] = input_frames[1:]
 
     print("Displaying background")
+    background.stitch_frames()
     background_pixels = background.get_terrain()
     background_frame = Frame(-1, len(background_pixels[0]), len(background_pixels))
     background_frame.read_into_blocks(background_pixels)
-    display_frame(input_frames[0])
+    # display_frame(input_frames[0])
     display_frame(background_frame)
     print("Displaying foreground")
     display_video_foreground(foreground)
+    print(background.x_offset, background.y_offset)
 
     # background, foreground = get_foreground_and_background(input_frames)
 
@@ -60,14 +62,14 @@ def main():
     composite_trail = get_composite_trail(background, foreground)
     display_frame_from_pixels(composite_trail)
 
-    print("Displaying video no objects")
-    video_no_objects = get_display_video_no_objects(background)
-    display_video_from_pixels(video_no_objects)
+    # print("Displaying video no objects")
+    # video_no_objects = get_display_video_no_objects(background)
+    # display_video_from_pixels(video_no_objects)
 
-    print("Displaying video around foreground")
-    video_around_foreground = get_display_video_around_foreground(background)
-    display_video_from_pixels(video_around_foreground)
-    detector.close()
+    # print("Displaying video around foreground")
+    # video_around_foreground = get_display_video_around_foreground(background)
+    # display_video_from_pixels(video_around_foreground)
+    # detector.close()
 
 def display_frame_from_pixels(pixels: List[List[List[int]]]):
     frame = Frame(-1, len(pixels[0]), len(pixels))
@@ -84,7 +86,7 @@ def display_video_from_pixels(pixels: List[List[List[List[int]]]]):
 
 def get_composite_trail(background: Terrain, frames: List[Frame]):
     trail = deepcopy(background)
-    trail.paste_foreground_frames(frames[::10])
+    trail.paste_foreground_frames(frames[::50])
     trail_pixels = trail.get_terrain()
     return trail_pixels
 

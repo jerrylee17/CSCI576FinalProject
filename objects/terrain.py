@@ -58,7 +58,7 @@ class Terrain:
 
     def get_terrain(self) -> List[List[List[int]]]:
         """Return entire terrain"""
-        self.stitch_frames()
+        # self.stitch_frames()
         return self.pixels
 
     def synchronize(self, background):
@@ -68,6 +68,7 @@ class Terrain:
         pass
 
     def paste_foreground_frames(self, frames: List[Frame]):
+        untouched_pixels = np.ones((MACRO_SIZE, MACRO_SIZE, 3))*255
         for frame in frames:
             for block in frame.blocks:
                 # Must be foreground
