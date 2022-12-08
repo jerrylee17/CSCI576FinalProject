@@ -49,7 +49,7 @@ def main():
     display_frame(background_frame)
     print("Displaying foreground")
     display_video_foreground(foreground)
-    print(background.x_offset, background.y_offset)
+    # print(background.x_offset, background.y_offset)
 
     # background, foreground = get_foreground_and_background(input_frames)
 
@@ -58,13 +58,13 @@ def main():
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
     
-    print("Displaying composite trail")
-    composite_trail = get_composite_trail(background, foreground)
-    display_frame_from_pixels(composite_trail)
+    # print("Displaying composite trail")
+    # composite_trail = get_composite_trail(background, foreground)
+    # display_frame_from_pixels(composite_trail)
 
-    # print("Displaying video no objects")
-    # video_no_objects = get_display_video_no_objects(background)
-    # display_video_from_pixels(video_no_objects)
+    print("Displaying video no objects")
+    video_no_objects = get_display_video_no_objects(background)
+    display_video_from_pixels(video_no_objects)
 
     # print("Displaying video around foreground")
     # video_around_foreground = get_display_video_around_foreground(background)
@@ -80,7 +80,7 @@ def display_video_from_pixels(pixels: List[List[List[List[int]]]]):
     frames = []
     for i, frame_pixels in enumerate(pixels):
         frame = Frame(i, len(frame_pixels[0]), len(frame_pixels))
-        frame.read_into_blocks(frame)
+        frame.read_into_blocks(frame_pixels)
         frames.append(frame)
     display_video(frames)
 
