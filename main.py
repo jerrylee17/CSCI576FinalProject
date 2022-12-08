@@ -8,6 +8,9 @@ from typing import List
 from copy import deepcopy
 import pickle
 
+from util.object_segmentation import Object_Segmentation
+
+
 def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
@@ -26,8 +29,8 @@ def main():
 
     for i in range(len(input_frames) - 1):
         print(f'Processing frame {i+1}/{len(input_frames)}')
-        previous_frame_data = input_frames[i].get_frame_data()
-        input_frames[i+1].calculate_block_motion_vector(previous_frame_data)
+        #previous_frame_data = input_frames[i].get_frame_data()
+        #input_frames[i+1].calculate_block_motion_vector(previous_frame_data)
         # Attempt getting motion vector with average
         input_frames[i+1].calculate_average_motion_vector()
         input_frames[i+1].set_block_visibility()
@@ -38,8 +41,6 @@ def main():
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
-    background: Terrain = Terrain(input_frames, 0)
-    foreground: List[Frame] = input_frames[1:]
 
     print("Displaying background")
     background.stitch_frames()
