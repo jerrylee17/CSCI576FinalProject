@@ -1,7 +1,7 @@
 from copy import deepcopy
 from objects.frame import Frame
 from objects.block import Block
-from objects.constants import MACRO_SIZE
+from objects.constants import MACRO_SIZE,FILLINFRAMES
 from typing import List
 import numpy as np
 
@@ -124,3 +124,32 @@ class Terrain:
                     frame_data[y, x] = self.pixels[y_index, x_index]
             frames.append(frame_data)
         return frames
+
+    def fill_hole(self):
+        step=FILLINFRAMES
+        filledFrames=[]
+        #not fill in the last frames 
+        for index in range(len(self.frames)-step):
+            tmpFrame=self.frames[index]
+            blockInd=0
+            for block in tmpFrame.blocks:
+                block_offset_x=0
+                block_offset_y=0
+                if block.type == 1:
+                    for s in range(step):
+                        #not sure the index for motion vector is index+s+1 or index+s
+                        block_offset_x+=self.frames[index+s].vector[0]
+                        block_offset_y+=self.frames[index+s].vector[1]
+                    offset_Ind=self.calculate_block_offset(block_offset_x,block_offset_y)
+                    if blockInd+offset_Ind<len(self.frames[index+step].blocks):
+                        self.frames[index].blocks[blockInd]=deepcopy(self.frames[index+step].blocks[blockInd+offset_Ind])
+                blockInd+=1
+            filledFrames.append(self.frames[index])
+        self.frames=filledFrames
+
+    def calculate_block_offset(self,offset_x,offset_y):
+        block_width= self.frames[0].width // MACRO_SIZE
+        offset_ind_x=offset_x//MACRO_SIZE
+        offset_ind_y=offset_y//MACRO_SIZE
+        offset_Ind=offset_ind_y*block_width+offset_ind_x
+        return offset_Ind
