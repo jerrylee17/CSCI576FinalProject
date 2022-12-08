@@ -41,8 +41,6 @@ class Frame:
   def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
     self.frame_convert_to_hsv(previous_frame_data)
     for i in range(len(self.blocks)):
-      if i == 22:
-        print("---")
       print("Block " + str(i) + ":")
       self.blocks[i].calculate_motion_vector(previous_frame_data)
       if not self.blocks[i].vector:
@@ -139,15 +137,17 @@ class Frame:
       if (is_individual): self.blocks[i].type = 0
 
   def human_detection(self, detector) -> None:
+
     human_boxs = detector.get_human_position(self.get_frame_data())
     if len(human_boxs) == 0:
       return
     for block in self.blocks:
       if self.in_boxes(human_boxs, block.position):
-        #block.type = 1
-        continue
+        block.type = 1
+        #continue
       else:
         block.type = 0
+    return human_boxs
 
   def in_boxes(self, human_boxs, position):
     for box in human_boxs:
@@ -192,6 +192,23 @@ class Frame:
     blocks = deepcopy(self.blocks)
     for block in blocks:
       if block.type == 0:
+        block.data = np.ones((MACRO_SIZE, MACRO_SIZE, 3)) * 255
+    blocks = np.array(blocks)
+    blocks = blocks.reshape(y_blocks, x_blocks)
+    frame_data = []
+    for block_row in blocks:
+      block_row = [x.data for x in block_row]
+      block_row = np.concatenate(block_row, axis=1)
+      frame_data.extend(block_row)
+    frame_data = np.array(frame_data)
+    return frame_data
+
+  def get_frame_background(self) -> List[List[List[int]]]:
+    x_blocks = self.width // MACRO_SIZE
+    y_blocks = self.height // MACRO_SIZE
+    blocks = deepcopy(self.blocks)
+    for block in blocks:
+      if block.type == 1:
         block.data = np.ones((MACRO_SIZE, MACRO_SIZE, 3)) * 255
     blocks = np.array(blocks)
     blocks = blocks.reshape(y_blocks, x_blocks)
