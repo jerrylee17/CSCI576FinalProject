@@ -1,3 +1,4 @@
+from copy import deepcopy
 from objects.frame import Frame
 from objects.block import Block
 from objects.constants import MACRO_SIZE
@@ -58,7 +59,7 @@ class Terrain:
 
     def get_terrain(self) -> List[List[List[int]]]:
         """Return entire terrain"""
-        self.stitch_frames()
+        # self.stitch_frames()
         return self.pixels
 
     def synchronize(self, background):
@@ -68,6 +69,7 @@ class Terrain:
         pass
 
     def paste_foreground_frames(self, frames: List[Frame]):
+        untouched_pixels = np.ones((MACRO_SIZE, MACRO_SIZE, 3))*255
         for frame in frames:
             for block in frame.blocks:
                 # Must be foreground
@@ -99,9 +101,26 @@ class Terrain:
     def get_background_frame_positions(self) -> List[List[List[List[int]]]]:
         frames = []
         for frame in self.frames:
-            x_start = self.x_offset + frame.position[0]
-            y_start = self.y_offset + frame.position[1]
-            x_end, y_end = x_start + frame.width, y_start + frame.height
-            new_frame = self.pixels[y_start: y_end, x_start: x_end]
-            frames.append(new_frame)
+            x_blocks = frame.width // MACRO_SIZE
+            y_blocks = frame.height // MACRO_SIZE
+            blocks = deepcopy(frame.blocks)
+            for block in blocks:
+                if block.type == 1:
+                    block.data = np.ones((MACRO_SIZE, MACRO_SIZE, 3)) * -1
+            blocks = np.array(blocks)
+            blocks = blocks.reshape(y_blocks, x_blocks)
+            frame_data = []
+            for block_row in blocks:
+                block_row = [x.data for x in block_row]
+                block_row = np.concatenate(block_row, axis=1)
+                frame_data.extend(block_row)
+            frame_data = np.array(frame_data)
+            # Change pixels that are [-1,-1,-1]
+            for y in range(len(frame_data)):
+                for x in range(len(frame_data[0])):
+                    if frame_data[y][x][0] != -1: continue
+                    x_index = frame.position[0] + x + self.x_offset
+                    y_index = frame.position[1] + y + self.y_offset
+                    frame_data[y, x] = self.pixels[y_index, x_index]
+            frames.append(frame_data)
         return frames

@@ -123,8 +123,8 @@ def read_video(file_path: str) -> List[Frame]:
     file_names = listdir(file_path)
     file_names.sort()
     for index, file_name in enumerate(file_names):
-        # if index <= 0: continue;  # Debug
-        # if index >= 50 : break;  # Debug
+        # if index < 50: continue;  # Debug
+        # if index >= 60: break;  # Debug
         if file_name.endswith(".DS_Store"): continue
         image_name = f"{file_path}/{file_name}"
         image = read_rgb_image_(image_name, index, width, height)
@@ -204,7 +204,10 @@ def display_video(frames: List[Frame]):
         frame = frames[i].get_frame_data()
         for col in range(frames[0].width - frames[0].pad_y):
             for row in range(frames[0].height - frames[0].pad_x):
-                img.putpixel((col, row), (frame[row][col][0], frame[row][col][1], frame[row][col][2]))
+                img.putpixel((col, row), (
+                    int(frame[row][col][0]), 
+                    int(frame[row][col][1]), 
+                    int(frame[row][col][2])))
 
         frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
         video.write(frame_cvt)

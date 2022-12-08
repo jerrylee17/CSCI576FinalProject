@@ -44,8 +44,8 @@ class Block:
             self.vector = (dx, dy)
           else:
             continue
-    print(self.vector)
-    print(min_MAD)
+    # print(self.vector)
+    # print(min_MAD)
 
   def calculate_motion_vector_1(self, previous_frame_data: List[List[List[int]]]) -> None:
     """Calculates motion vector based on MAD"""

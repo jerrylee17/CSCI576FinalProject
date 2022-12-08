@@ -41,7 +41,9 @@ class Frame:
   def calculate_block_motion_vector(self, previous_frame_data: List[List[List[int]]]) -> None:
     self.frame_convert_to_hsv(previous_frame_data)
     for i in range(len(self.blocks)):
-      print("Block " + str(i) + ":")
+    #   if i == 22:
+    #     print("---")
+    #   print("Block " + str(i) + ":")
       self.blocks[i].calculate_motion_vector(previous_frame_data)
       if not self.blocks[i].vector:
         print(i)
