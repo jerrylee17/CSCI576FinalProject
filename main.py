@@ -41,6 +41,8 @@ def main():
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
+    background: Terrain = Terrain(input_frames, 0)
+    foreground: List[Frame] = input_frames[1:]
 
     print("Displaying background")
     background.stitch_frames()
