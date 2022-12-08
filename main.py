@@ -38,13 +38,13 @@ def main():
         #input_frames[i+1].calculate_frame_position(input_frames[i])
         pd = Object_Segmentation(input_frames[i+1])
         pd.set_moving_object_blocks()
-        save_video_background(input_frames[i+1])
-    foreground: List[Frame] = input_frames[1:]
-    display_video_foreground(foreground)
-    save_video_background(input_frames[1:])
+        #save_video_background(input_frames[i+1])
+
     # Intermediate step: Separate into background and foreground
     # Store background and foreground in terrains
     # Make sure background and foreground have the same dimensions
+    background: Terrain = Terrain(input_frames, 0)
+    foreground: List[Frame] = input_frames[1:]
 
     print("Displaying background")
     background.stitch_frames()
@@ -63,7 +63,7 @@ def main():
     # 1. Display motion trails
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
-    
+
     # print("Displaying composite trail")
     # composite_trail = get_composite_trail(background, foreground)
     # display_frame_from_pixels(composite_trail)
