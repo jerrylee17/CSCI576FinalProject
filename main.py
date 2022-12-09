@@ -58,17 +58,21 @@ def main():
     # 2. Display new video around the foreground object
     # 3. Remove objects from video
     
+    # Application 1
     # print("Displaying composite trail")
     # composite_trail = get_composite_trail(background, foreground)
     # display_frame_from_pixels(composite_trail)
 
+    # Application 2
+    print("Displaying video with random path")
+    video_frame_path = get_frame_path(background)
+    display_video_from_pixels(video_frame_path)
+
+    # Application 3
     # print("Displaying video no objects")
     # video_no_objects = get_display_video_no_objects(background)
     # display_video_from_pixels(video_no_objects)
 
-    print("Displaying video around foreground")
-    video_around_foreground = get_display_video_around_foreground(background)
-    display_video_from_pixels(video_around_foreground)
 
     # detector.close()
 
@@ -91,9 +95,9 @@ def get_composite_trail(background: Terrain, frames: List[Frame]):
     trail_pixels = trail.get_terrain()
     return trail_pixels
 
-def get_display_video_around_foreground(background: Terrain) -> List[List[List[List[int]]]]:
+def get_frame_path(background: Terrain) -> List[List[List[List[int]]]]:
     """Display video around foreground"""
-    return background.get_frames_around_foreground()
+    return background.get_frame_path()
 
 def get_display_video_no_objects(background: Terrain) -> List[List[List[List[int]]]]:
     """Display video with objects removed"""
