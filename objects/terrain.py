@@ -1,7 +1,7 @@
 from copy import deepcopy
 from objects.frame import Frame
 from objects.block import Block
-from objects.constants import MACRO_SIZE
+from objects.constants import MACRO_SIZE, FILLINFRAMES
 from typing import List
 import numpy as np
 
@@ -144,3 +144,45 @@ class Terrain:
                     frame_data[y, x] = self.pixels[y_index, x_index]
             frames.append(frame_data)
         return frames
+        
+    def fill_hole(self):
+        step=FILLINFRAMES
+        filledFrames=[]
+        #not fill in the last frames 
+        for index in range(len(self.frames)-step):
+            tmpFrame=self.frames[index]
+            blockInd=0
+            for block in tmpFrame.blocks:
+                backupBlock=block
+                roundCnt=1
+                sum_offset_x=0
+                sum_offset_y=0
+                while backupBlock.type == 1 and (index+step*roundCnt)<len(self.frames):
+                    round_offset_x,round_offset_y=self.get_backup_block(roundCnt,index)
+                    sum_offset_x+=round_offset_x
+                    sum_offset_y+=round_offset_y
+                    offset_Ind=self.calculate_block_offset(sum_offset_x,sum_offset_y)
+                    if blockInd+offset_Ind<len(self.frames[index+step*roundCnt].blocks):
+                        backupBlock=self.frames[index+step*roundCnt].blocks[blockInd+offset_Ind]
+                    roundCnt+=1
+                if block.type==1 and backupBlock.type == 0:
+                    self.frames[index].blocks[blockInd]=deepcopy(backupBlock)
+                blockInd+=1
+            filledFrames.append(self.frames[index])
+        self.frames=filledFrames
+
+    def calculate_block_offset(self,offset_x,offset_y):
+        block_width= self.frames[0].width // MACRO_SIZE
+        offset_ind_x=offset_x//MACRO_SIZE
+        offset_ind_y=offset_y//MACRO_SIZE
+        offset_Ind=offset_ind_y*block_width+offset_ind_x
+        return offset_Ind
+    
+    def get_backup_block(self,roundCnt,index):
+        step=FILLINFRAMES
+        round_offset_x=0
+        round_offset_y=0
+        for s in range(step):
+            round_offset_x+=self.frames[index+step*(roundCnt-1)+s].vector[0]
+            round_offset_y+=self.frames[index+step*(roundCnt-1)+s].vector[1]
+        return round_offset_x,round_offset_y
