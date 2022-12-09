@@ -79,22 +79,42 @@ class Terrain:
                 x_end, y_end = x_start + MACRO_SIZE, y_start + MACRO_SIZE
                 self.pixels[y_start: y_end, x_start: x_end] = block.data
     
-    def get_frames_around_foreground(self) -> List[List[List[List[int]]]]:
+    def get_frame_path(self) -> List[List[List[List[int]]]]:
+        """
+        Calculate x/y interval --> len(width) / num frames, len(height) / num_frames
+        For each frame --> temporarily paste foreground on background and query from there
+        """
+        width = len(self.pixels[0])
+        height = len(self.pixels)
+        frame_width = self.frames[0].width
+        frame_height = self.frames[0].height
+        x_interval = max((width - frame_width) // len(self.frames), 1)
+        y_interval = max((height - frame_height) // len(self.frames), 1)
+        split_x = [x for x in range(0, width - frame_width, x_interval)]
+        split_y = [y for y in range(0, height - frame_height, y_interval)]
+        # Populate split y / x
+        if len(split_y) < len(split_x):
+            len_diff = len(split_x) - len(split_y)
+            split_y = [0] * len_diff + split_y
+        if len(split_x) < len(split_y):
+            len_diff = len(split_y) - len(split_x)
+            split_x = [0] * len_diff + split_x
         frames = []
-        for frame in self.frames:
-            x_center, y_center = frame.get_frame_foreground_center()
-            x_start = self.x_offset + frame.position[0] + (x_center - frame.width) // 2
-            y_start = self.y_offset + frame.position[1] + (y_center - frame.height) // 2
-            x_end, y_end = x_start + frame.width, y_start + frame.height
-            # Currently has background
-            new_frame = self.pixels[y_start: y_end, x_start: x_end]
+        for i, (x_start, y_start) in enumerate(zip(split_x, split_y)):
+            if i >= len(self.frames):
+                break
+            frame = self.frames[i]
+            tmp_pixels = deepcopy(self.pixels)
             for block in frame.blocks:
                 # Must be foreground
                 if block.type != 1: continue
-                block_x_start = block.position[0] + (x_center - frame.width) // 2
-                block_y_start = block.position[1] + (y_center - frame.height) // 2
+                block_y_start = frame.position[1] + block.position[1] + self.y_offset
+                block_x_start = frame.position[0] + block.position[0] + self.x_offset
                 block_x_end, block_y_end = block_x_start + MACRO_SIZE, block_y_start + MACRO_SIZE
-                new_frame[block_y_start: block_y_end, block_x_start: block_x_end] = block.data
+                tmp_pixels[block_y_start: block_y_end, block_x_start: block_x_end] = block.data
+            x_end, y_end = x_start + frame_width, y_start + frame_height
+            new_frame = tmp_pixels[y_start: y_end, x_start: x_end]
+            new_frame = np.array(new_frame)
             frames.append(new_frame)
         return frames
 

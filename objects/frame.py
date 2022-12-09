@@ -174,7 +174,7 @@ class Frame:
     x_blocks = self.width // MACRO_SIZE
     y_blocks = self.height // MACRO_SIZE
     blocks = np.array(self.blocks).reshape(y_blocks, x_blocks)
-    x_count, x_sum, y_count, y_sum = 0
+    x_count, x_sum, y_count, y_sum = 0, 0, 0, 0
     for y, column in enumerate(blocks):
       for x, cell in enumerate(column):
         if cell.type == 0: continue
@@ -182,8 +182,12 @@ class Frame:
         y_count += 1
         x_sum += y
         x_sum += x
-    x_center = MACRO_SIZE * (x_sum // x_count)
-    y_center = MACRO_SIZE * (y_sum // y_count)
+    try:
+      x_center = MACRO_SIZE * (x_sum // x_count)
+      y_center = MACRO_SIZE * (y_sum // y_count)
+    except:
+      x_center = 0
+      y_center = 0
     return (x_center, y_center)
 
   def get_frame_foreground(self) -> List[List[List[int]]]:
