@@ -46,9 +46,9 @@ def main():
     background_frame = Frame(-1, len(background_pixels[0]), len(background_pixels))
     background_frame.read_into_blocks(background_pixels)
     # display_frame(input_frames[0])
-    display_frame(background_frame)
+    # display_frame(background_frame)
     print("Displaying foreground")
-    display_video_foreground(foreground)
+    # display_video_foreground(foreground)
     # print(background.x_offset, background.y_offset)
 
     # background, foreground = get_foreground_and_background(input_frames)
@@ -62,13 +62,14 @@ def main():
     # composite_trail = get_composite_trail(background, foreground)
     # display_frame_from_pixels(composite_trail)
 
-    print("Displaying video no objects")
-    video_no_objects = get_display_video_no_objects(background)
-    display_video_from_pixels(video_no_objects)
+    # print("Displaying video no objects")
+    # video_no_objects = get_display_video_no_objects(background)
+    # display_video_from_pixels(video_no_objects)
 
-    # print("Displaying video around foreground")
-    # video_around_foreground = get_display_video_around_foreground(background)
-    # display_video_from_pixels(video_around_foreground)
+    print("Displaying video around foreground")
+    video_around_foreground = get_display_video_around_foreground(background)
+    display_video_from_pixels(video_around_foreground)
+
     # detector.close()
 
 def display_frame_from_pixels(pixels: List[List[List[int]]]):

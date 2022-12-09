@@ -80,14 +80,25 @@ class Terrain:
                 self.pixels[y_start: y_end, x_start: x_end] = block.data
     
     def get_frames_around_foreground(self) -> List[List[List[List[int]]]]:
+        """
+        Calculate x/y interval --> len(width) / num frames, len(height) / num_frames
+        For each frame --> temporarily paste foreground on background and query from there
+        """
+        width = len(self.pixels[0])
+        height = len(self.pixels)
+        x_interval = width // len(self.frames)
+        y_interval = height // len(self.frames)
+        split_x = [x for x in range(0, )]
+
         frames = []
-        for frame in self.frames:
+        for frame in self.frames[1:]:
             x_center, y_center = frame.get_frame_foreground_center()
             x_start = self.x_offset + frame.position[0] + (x_center - frame.width) // 2
             y_start = self.y_offset + frame.position[1] + (y_center - frame.height) // 2
             x_end, y_end = x_start + frame.width, y_start + frame.height
             # Currently has background
             new_frame = self.pixels[y_start: y_end, x_start: x_end]
+            # Paste block on background
             for block in frame.blocks:
                 # Must be foreground
                 if block.type != 1: continue
