@@ -6,6 +6,7 @@ from objects.frame import Frame, test_read_into_blocks
 from objects.terrain import Terrain
 from typing import List
 from copy import deepcopy
+import pickle
 
 def main():
     input_video_path = sys.argv[1]
@@ -48,8 +49,12 @@ def main():
     # display_frame(input_frames[0])
     display_frame(background_frame)
     print("Displaying foreground")
-    display_video_foreground(foreground)
-    # print(background.x_offset, background.y_offset)
+    cache_background_foreground(background, foreground)
+
+    # TO READ CACHED DATA!!! COMMENT OUT EVERYTHING ABOVE AND LOAD THIS
+    data = read_cached_background_foreground()
+    background: Terrain = data["background"]
+    foreground: List[Frame] = data["foreground"]
 
     # background, foreground = get_foreground_and_background(input_frames)
 
@@ -75,6 +80,17 @@ def main():
 
 
     # detector.close()
+
+def cache_background_foreground(background: Terrain, foreground: List[Frame]):
+    data = {
+        "background": background,
+        "foreground": foreground
+    }
+    pickle.dump(data, open('data_file.bin', 'wb'))
+
+def read_cached_background_foreground():
+    data = pickle.load(open('data_file.bin', 'rb'))
+    return data
 
 def display_frame_from_pixels(pixels: List[List[List[int]]]):
     frame = Frame(-1, len(pixels[0]), len(pixels))
