@@ -46,9 +46,9 @@ def main():
     background_frame = Frame(-1, len(background_pixels[0]), len(background_pixels))
     background_frame.read_into_blocks(background_pixels)
     # display_frame(input_frames[0])
-    # display_frame(background_frame)
+    display_frame(background_frame)
     print("Displaying foreground")
-    # display_video_foreground(foreground)
+    display_video_foreground(foreground)
     # print(background.x_offset, background.y_offset)
 
     # background, foreground = get_foreground_and_background(input_frames)
@@ -64,9 +64,9 @@ def main():
     # display_frame_from_pixels(composite_trail)
 
     # Application 2
-    print("Displaying video with random path")
-    video_frame_path = get_frame_path(background)
-    display_video_from_pixels(video_frame_path)
+    # print("Displaying video with random path")
+    # video_frame_path = get_frame_path(background)
+    # display_video_from_pixels(video_frame_path)
 
     # Application 3
     # print("Displaying video no objects")
