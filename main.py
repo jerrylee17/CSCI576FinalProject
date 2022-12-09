@@ -49,9 +49,12 @@ def main():
     # display_frame(input_frames[0])
     display_frame(background_frame)
     print("Displaying foreground")
-    display_video_foreground(foreground)
-    # write_frames_to_file(foreground)
-    # print(background.x_offset, background.y_offset)
+    cache_background_foreground(background, foreground)
+
+    # TO READ CACHED DATA!!! COMMENT OUT EVERYTHING ABOVE AND LOAD THIS
+    data = read_cached_background_foreground()
+    background: Terrain = data["background"]
+    foreground: List[Frame] = data["foreground"]
 
     # background, foreground = get_foreground_and_background(input_frames)
 
@@ -78,15 +81,16 @@ def main():
 
     # detector.close()
 
-def write_frames_to_file(frames: List[Frame]):
+def cache_background_foreground(background: Terrain, foreground: List[Frame]):
     data = {
-        "frames": frames
+        "background": background,
+        "foreground": foreground
     }
     pickle.dump(data, open('data_file.bin', 'wb'))
 
-def read_frames_from_file():
+def read_cached_background_foreground():
     data = pickle.load(open('data_file.bin', 'rb'))
-    return data["frames"]
+    return data
 
 def display_frame_from_pixels(pixels: List[List[List[int]]]):
     frame = Frame(-1, len(pixels[0]), len(pixels))
