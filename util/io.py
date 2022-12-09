@@ -40,7 +40,7 @@ def read_rgb_image_(file_name: str, index, width: int, height: int) -> Frame:
             image.append(col_list)
         image = np.array(image)
         # image = np.pad(
-        #     image, 
+        #     image,
         #     [(0, pad_x), (0, pad_y), (0, 0)],
         #     mode='constant', constant_values=0)
         # frame = Frame(index, width + pad_y, height + pad_x, pad_x, pad_y)
@@ -143,7 +143,7 @@ def display_video_foreground(frames: List[Frame]):
         for col in range(frames[0].width - frames[0].pad_y):
             for row in range(frames[0].height - frames[0].pad_x):
                 img.putpixel(
-                    (col, row), 
+                    (col, row),
                     (int(frame[row][col][0]),
                         int(frame[row][col][1]),
                         int(frame[row][col][2])))
@@ -155,6 +155,44 @@ def display_video_foreground(frames: List[Frame]):
     # Display video after generation
     play_video_(FPS)
 
+def save_video_background(frames: List[Frame]):
+    """Generate resultant video, and play it by calling play_video."""
+    video_dims = (frames[0].width - frames[0].pad_y, frames[0].height - frames[0].pad_x)
+    img = Image.new('RGB', video_dims, color='darkred')
+    for i in range(len(frames)):
+        frame = frames[i].get_frame_background()
+        for col in range(frames[0].width - frames[0].pad_y):
+            for row in range(frames[0].height - frames[0].pad_x):
+                img.putpixel(
+                    (col, row),
+                    (int(frame[row][col][0]),
+                        int(frame[row][col][1]),
+                        int(frame[row][col][2])))
+
+        frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        # Filename
+        filename = r'C:\Users\12237\Desktop\CSCI576\CSCI576FinalProject\warp\savedImage0' + str(i) + '.jpg'
+        print(filename)
+        cv2.imwrite(filename, frame_cvt)
+
+def save_frame_background(frame,i):
+    """Generate resultant video, and play it by calling play_video."""
+    video_dims = (frame.width - frame.pad_y, frame.height - frame.pad_x)
+    img = Image.new('RGB', video_dims, color='darkred')
+    frame = frame.get_frame_background()
+    for col in range(frame.width - frame.pad_y):
+        for row in range(frame.height - frame.pad_x):
+            img.putpixel(
+                    (col, row),
+                    (int(frame[row][col][0]),
+                        int(frame[row][col][1]),
+                        int(frame[row][col][2])))
+
+    frame_cvt = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        # Filename
+    filename = r'C:\Users\12237\Desktop\CSCI576\CSCI576FinalProject\warp\savedImage0' + str(i) + '.jpg'
+    print(filename)
+    cv2.imwrite(filename, frame_cvt)
 
 def display_video(frames: List[Frame]):
     """Generate resultant video, and play it by calling play_video."""

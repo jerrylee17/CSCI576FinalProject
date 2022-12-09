@@ -25,6 +25,8 @@ def get_warped_panorama(frames: List[Frame]):
     cv2.waitKey(0)
 
 
+
+
 if __name__ == '__main__':
     frames = read_video("/Users/lyb/Documents/Workplace/PyCharm/CSCI576FinalProject/videos/test1_480_270_404")
     get_warped_panorama(frames)

@@ -8,6 +8,8 @@ from typing import List
 from copy import deepcopy
 import pickle
 
+from util.object_segmentation import Object_Segmentation
+
 def main():
     input_video_path = sys.argv[1]
     # Read input into list of frames
@@ -118,6 +120,10 @@ def get_frame_path(background: Terrain) -> List[List[List[List[int]]]]:
 def get_display_video_no_objects(background: Terrain) -> List[List[List[List[int]]]]:
     """Display video with objects removed"""
     return background.get_background_frame_positions()
+
+def get_filled_background(background: Terrain):
+    background.fill_hole()
+    return background.frames
 
 if __name__ == '__main__':
     main()
