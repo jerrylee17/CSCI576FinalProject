@@ -52,9 +52,9 @@ def main():
     cache_background_foreground(background, foreground)
 
     # TO READ CACHED DATA!!! COMMENT OUT EVERYTHING ABOVE AND LOAD THIS
-    data = read_cached_background_foreground()
-    background: Terrain = data["background"]
-    foreground: List[Frame] = data["foreground"]
+    # data = read_cached_background_foreground()
+    # background: Terrain = data["background"]
+    # foreground: List[Frame] = data["foreground"]
 
     # background, foreground = get_foreground_and_background(input_frames)
 
